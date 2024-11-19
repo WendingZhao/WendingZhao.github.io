@@ -1,3 +1,26 @@
+<!--
+---
+permalink: /
+title: "Brief Bio"
+author_profile: true
+redirect_from: 
+  - /about/
+  - /about.html
+---
+I am currently a senior undergraduate student with the College of Electronic Science and Technology, [NUDT](https://www.nudt.edu.cn).My research interests focus on computer vision, especially on light-field super resolution.
+
+I am very fortunate to be advised by [Dr. Wang](https://yingqianwang.github.io/) from [NUDT](https://www.nudt.edu.cn).
+
+ My CV coming soon(like code coming soon,lol):[Wending Zhao's Curriculum Vitae](../assets/Curriculum_Vitae.pdf).
+ 
+[Email](mailto:zwd21@nudt.edu.cn) / [Github](https://github.com/WendingZhao) 
+
+Google scholar and other blog also coming soon.
+
+Besides, this page is still under construction and i got to go finish my homework.
+
+
+<!--
 ---
 permalink: /
 title: "Academic Pages is a ready-to-fork GitHub Pages template for academic personal websites"
@@ -47,3 +70,4 @@ Example: editing a markdown file for a talk
 For more info
 ------
 More info about configuring Academic Pages can be found in [the guide](https://academicpages.github.io/markdown/), the [growing wiki](https://github.com/academicpages/academicpages.github.io/wiki), and you can always [ask a question on GitHub](https://github.com/academicpages/academicpages.github.io/discussions). The [guides for the Minimal Mistakes theme](https://mmistakes.github.io/minimal-mistakes/docs/configuration/) (which this theme was forked from) might also be helpful.
+-->
