@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+    <title>Arxiv论文加速</title>
+    <!-- 引入Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 配置Tailwind自定义颜色和字体 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        accent: '#722ED1',
+                        neutral: '#F5F7FA',
+                        dark: '#1D2129'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <!-- 自定义工具类 -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+        }
+    </style>
+    
+    <style>
+        /* 全局动画定义 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .animate-fadeIn {
+            animation: fadeIn 0.5s ease forwards;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #165DFF 0%, #722ED1 100%);
+        }
+        
+        /* 输入框聚焦动画 */
+        .input-focus-effect:focus {
+            box-shadow: 0 0 0 3px rgba(22, 93, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="font-inter bg-gray-50 text-dark min-h-screen flex flex-col">
+    <!-- 主要内容区 -->
+    <main class="flex-grow">
+        <h3 class="text-2xl md:text-3xl font-bold text-center mb-2 mt-16">arXiv 论文加速</h3>
+        <!-- 下载表单区域 -->
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-2xl mx-auto bg-neutral rounded-2xl shadow-lg p-6 md:p-8 animate-fadeIn" style="animation-delay: 0.1s;">
+
+                    <form id="downloadForm" class="space-y-6">
+                        <div>
+                            <label for="arxivInput" class="block text-sm font-medium text-gray-700 mb-1">
+                                Arxiv链接或论文ID
+                            </label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                                    <i class="fa fa-link"></i>
+                                </span>
+                                <input 
+                                    type="text" 
+                                    id="arxivInput" 
+                                    placeholder="例如: https://arxiv.org/abs/1706.03762 或 1706.03762" 
+                                    class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary input-focus-effect transition-custom"
+                                    required
+                                >
+                            </div>
+                            <p class="mt-2 text-sm text-gray-500">
+                                支持格式: https://arxiv.org/abs/1706.03762 或 1706.03762
+                            </p>
+                        </div>
+                        
+                        <div id="paperInfo" class="hidden bg-white p-4 rounded-lg border border-gray-200">
+                            <h4 class="font-medium text-gray-800 mb-2">论文信息</h4>
+                            <div class="space-y-2">
+                                <p><span class="text-gray-500">标题:</span> <span id="paperTitle" class="font-medium"></span></p>
+                                <p><span class="text-gray-500">年份:</span> <span id="paperYear" class="font-medium"></span></p>
+                                <p><span class="text-gray-500">文件名:</span> <span id="fileName" class="font-medium text-primary"></span></p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex flex-col space-y-4">
+                            <button 
+                                type="button" 
+                                id="fetchInfoBtn" 
+                                class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center space-x-2"
+                            >
+                                <i class="fa fa-search"></i>
+                                <span>获取论文信息</span>
+                            </button>
+                            
+                            <button 
+                                type="button" 
+                                id="downloadBtn" 
+                                class="w-full bg-accent hover:bg-accent/90 text-white font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center space-x-2 hidden"
+                            >
+                                <i class="fa fa-download"></i>
+                                <span>加速下载</span>
+                            </button>
+                        </div>
+                    </form>
+                    
+                    <!-- 状态提示区域 -->
+                    <div id="statusMessage" class="mt-6 hidden p-4 rounded-lg text-center"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 使用说明区域 -->
+        <section id="usage" class="py-16 bg-white">
+            <div class="container mx-auto px-4 max-w-3xl">                
+                <div class="space-y-8">
+                    <div class="flex">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">1.输入Arxiv链接或ID</h4>
+                            <p class="text-gray-600">在输入框中粘贴完整的Arxiv论文链接（如https://arxiv.org/abs/1706.03762），或直接输入论文ID（如1706.03762）。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">2.获取论文信息</h4>
+                            <p class="text-gray-600">点击"获取论文信息"按钮，自动解析并获取论文标题和发表年份。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex">
+                        <div>
+                            <h4 class="text-lg font-semibold mb-2">3.开始加速下载</h4>
+                            <p class="text-gray-600">确认论文信息无误后，点击"加速下载"按钮，文件将以论文标题_发布日期.pdf命名（获取失败使用arXiv ID）</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 加载动画 -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center">
+        <div class="bg-white p-6 rounded-lg flex items-center space-x-3">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <span>处理中，请稍候...</span>
+        </div>
+    </div>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    // 关闭移动菜单（如果打开）
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    if (mobileMenu) mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+        
+        // 主要功能逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            const arxivInput = document.getElementById('arxivInput');
+            const fetchInfoBtn = document.getElementById('fetchInfoBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const paperInfo = document.getElementById('paperInfo');
+            const paperTitle = document.getElementById('paperTitle');
+            const paperYear = document.getElementById('paperYear');
+            const fileName = document.getElementById('fileName');
+            const statusMessage = document.getElementById('statusMessage');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            
+            let currentArxivId = null;
+            let currentFileName = null;
+            
+            // 显示状态消息 - 修复了类名添加错误
+            function showStatus(message, isError = false) {
+                statusMessage.textContent = message;
+                // 先移除所有可能的状态类
+                statusMessage.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800');
+                
+                // 分别添加类名，而不是作为一个包含空格的字符串
+                if (isError) {
+                    statusMessage.classList.add('bg-red-100');
+                    statusMessage.classList.add('text-red-800');
+                } else {
+                    statusMessage.classList.add('bg-green-100');
+                    statusMessage.classList.add('text-green-800');
+                }
+                
+                // 5秒后自动隐藏
+                setTimeout(() => statusMessage.classList.add('hidden'), 5000);
+            }
+            
+            // 显示加载状态
+            function showLoading() {
+                loadingOverlay.classList.remove('hidden');
+                loadingOverlay.classList.add('flex');
+            }
+            
+            // 隐藏加载状态
+            function hideLoading() {
+                loadingOverlay.classList.add('hidden');
+                loadingOverlay.classList.remove('flex');
+            }
+            
+            // 从输入中提取Arxiv ID
+            function extractArxivId(input) {
+                input = input.trim();
+                const patterns = [
+                    /arxiv\.org\/(abs|pdf)\/([\d.]+v?\d*)/i,
+                    /arxiv\.org\/(abs|pdf)\/([\w-]+\/\d+)/i,
+                    /^[\d.]+\d*$/,
+                    /^[\w-]+\/\d+$/
+                ];
+                for (const pattern of patterns) {
+                    const match = input.match(pattern);
+                    if (match) return match.length > 2 ? match[2] : match[0];
+                }
+                return null;
+            }
+            
+            // 生成文件名（优先用API获取的信息，失败时使用arXiv ID）
+            function generateFileName(title = '', year = '', arxivId = '') {
+                // 如果有有效的标题和年份，使用它们生成文件名
+                if (title.trim() && !isNaN(Number(year)) && year.length === 4) {
+                    const cleanTitle = title.trim().replace(/\s+/g, '_').replace(/[<>:"/\\|?*]/g, '');
+                    return `${cleanTitle}_${year}.pdf`;
+                }
+                // 否则使用arXiv ID作为文件名
+                return `${arxivId}.pdf`;
+            }
+            
+            // 获取论文信息
+            fetchInfoBtn.addEventListener('click', async function() {
+                const input = arxivInput.value;
+                if (!input) {
+                    showStatus('请输入Arxiv链接或论文ID', true);
+                    return;
+                }
+                
+                // 提取Arxiv ID
+                const arxivId = extractArxivId(input);
+                if (!arxivId) {
+                    showStatus('无法识别的Arxiv链接或ID格式', true);
+                    return;
+                }
+                currentArxivId = arxivId;
+                
+                try {
+                    showLoading();
+                    showStatus('正在获取论文信息...');
+                    
+                    // 调用Arxiv API获取论文信息
+                    const apiUrl = `https://export.arxiv.org/api/query?id_list=${arxivId}`;
+                    const response = await fetch(apiUrl);
+                    
+                    if (!response.ok) throw new Error(`API请求失败: ${response.status}`);
+                    
+                    const xmlText = await response.text();
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(xmlText, 'application/xml');
+                    
+                    // 提取标题
+                    const titleElement = xmlDoc.querySelector('entry title');
+                    const title = titleElement ? titleElement.textContent.trim() : '';
+                    
+                    // 提取年份
+                    const publishedElement = xmlDoc.querySelector('entry published');
+                    let year = '';
+                    if (publishedElement) {
+                        const publishedDate = new Date(publishedElement.textContent);
+                        year = publishedDate.getFullYear().toString();
+                    }
+                    
+                    // 生成文件名
+                    currentFileName = generateFileName(title, year, arxivId);
+                    
+                    // 显示论文信息
+                    paperTitle.textContent = title || '无法获取标题';
+                    paperYear.textContent = year || '无法获取年份';
+                    fileName.textContent = currentFileName;
+                    paperInfo.classList.remove('hidden');
+                    
+                    // 显示下载按钮
+                    downloadBtn.classList.remove('hidden');
+                    showStatus('论文信息获取成功');
+                    
+                } catch (error) {
+                    console.error('获取论文信息失败:', error);
+                    // 信息获取失败时，使用arXiv ID作为文件名
+                    currentFileName = `${arxivId}.pdf`;
+                    showStatus(`论文信息获取失败（${error.message}），将使用arXiv ID作为文件名下载`, true);
+                    // 隐藏详细信息面板
+                    paperInfo.classList.add('hidden');
+                    // 仍然显示下载按钮
+                    downloadBtn.classList.remove('hidden');
+                } finally {
+                    hideLoading();
+                }
+            });
+            
+            // 下载论文
+            downloadBtn.addEventListener('click', async function() {
+                if (!currentArxivId) {
+                    showStatus('请先获取论文信息', true);
+                    return;
+                }
+                
+                try {
+                    showLoading();
+                    showStatus(`正在准备下载（文件名：${currentFileName}）...`);
+                    
+                    const downloadUrl = `https://s2.qiumo.fun/proxy/arxiv/pdf/${currentArxivId}?custom_filename=${encodeURIComponent(currentFileName)}`;
+                    
+                    // 创建隐藏a标签触发下载
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = currentFileName;
+                    console.log(currentFileName);
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    
+                    showStatus(`下载已开始（文件将保存为：${currentFileName}）`);
+                } catch (error) {
+                    console.error('下载失败:', error);
+                    showStatus(`下载失败: ${error.message}`, true);
+                } finally {
+                    hideLoading();
+                }
+            });
+            
+            // 输入框回车键触发获取信息
+            arxivInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') fetchInfoBtn.click();
+            });
+        });
+    </script>
+</body>
+</html>
+    

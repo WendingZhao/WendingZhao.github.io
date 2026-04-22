@@ -1,0 +1,62 @@
+---
+import config from 'virtual:config'
+import PageLayout from '@/layouts/CommonPage.astro'
+import FriendList from '@/components/links/FriendList.astro'
+
+const headings = [
+  { depth: 2, slug: 'common-links', text: 'Common Links' },
+  { depth: 2, slug: 'apply-links', text: 'Apply Links' }
+]
+
+const linksConf = config.integ.links
+const hexoFriendLinks = {
+  id_name: 'hexo-friends',
+  desc: '我和我的小伙伴们',
+  link_list: [
+    {
+      name: '🐉博',
+      intro: '是的，一只龙',
+      link: 'https://www.tariky.cn/',
+      avatar: 'https://www.tariky.cn/upload/long.png'
+    },
+    {
+      name: 'Wending Zhao',
+      intro: '一位学术糕手',
+      link: 'https://wendingzhao.github.io/',
+      avatar: 'https://avatars.githubusercontent.com/u/95453169?v=4'
+    },
+    {
+      name: 'Longlongyu',
+      intro: '百废待星',
+      link: 'https://cmarks.cn/',
+      avatar: 'https://avatars.githubusercontent.com/u/40429255?v=4'
+    }
+  ]
+}
+---
+
+<PageLayout title='Links' {headings}>
+  <p>They're sorted randomly.</p>
+  <h2 id='common-links'>Common Links</h2>
+  <FriendList list={hexoFriendLinks} />
+
+  <h2 id='apply-links'>Apply Links</h2>
+  <p>本站信息（点击复制）The site information (click to copy)：</p>
+  <blockquote class='not-prose grid grid-cols-[auto_1fr] gap-x-2 break-words border-s-4 ps-4'>
+    {
+      linksConf.applyTip.map(({ name, val }) => {
+        const script = `navigator.clipboard.writeText('${val}');document.dispatchEvent(new CustomEvent('toast',{detail:{message:'Copied "${val}" to clipboard!'}}))`
+        return (
+          <>
+            <span class='text-end'>{name}:</span>
+            <samp class='cursor-pointer' onclick={script}>
+              {val}
+            </samp>
+          </>
+        )
+      })
+    }
+  </blockquote>
+
+
+</PageLayout>

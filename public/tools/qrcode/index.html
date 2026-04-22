@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>你是来干什么的？</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --dark-bg: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            --light-bg: rgba(255, 255, 255, 0.98);
+            --card-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            --hover-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+            --text-dark: #2d3748;
+            --text-light: #718096;
+            --success-color: #48bb78;
+            --warning-color: #ed8936;
+            --error-color: #f56565;
+            --info-color: #4299e1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            color: var(--text-dark);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: var(--light-bg);
+            border-radius: 24px;
+            box-shadow: var(--card-shadow);
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+                border-radius: 20px;
+                margin: 10px;
+            }
+        }
+
+        h1 {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 24px;
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+        }
+
+        p {
+            margin: 16px 0;
+            color: var(--text-light);
+            font-size: 16px;
+        }
+
+        .status-container {
+            padding: 20px;
+            border-radius: 16px;
+            margin: 24px 0;
+            font-weight: 600;
+            font-size: 18px;
+            background: rgba(66, 153, 225, 0.08);
+            border: 1px solid rgba(66, 153, 225, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .status.connected {
+            background: rgba(72, 187, 120, 0.08);
+            border-color: rgba(72, 187, 120, 0.2);
+        }
+
+        .status.disconnected {
+            background: rgba(245, 101, 101, 0.08);
+            border-color: rgba(245, 101, 101, 0.2);
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-gradient);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .qr-container {
+            position: relative;
+            margin: 30px 0;
+            padding: 30px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @media (max-width: 480px) {
+            .qr-container {
+                padding: 20px;
+                min-height: 250px;
+            }
+        }
+
+        #qrcode {
+            margin: 0 auto;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .timer {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 20px 0;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .timer span {
+            background: var(--secondary-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .qr-mask {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+
+        .qr-mask-content {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .qr-mask .loading {
+            width: 40px;
+            height: 40px;
+            border-width: 4px;
+            margin-bottom: 16px;
+        }
+
+        #qr-status {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-top: 12px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
+
+        .page-title svg {
+            width: 32px;
+            height: 32px;
+            fill: currentColor;
+        }
+
+        .back-btn {
+            background: transparent;
+            color: var(--text-light);
+            border: 2px solid rgba(113, 128, 150, 0.3);
+            padding: 12px 30px;
+            margin-top: 10px;
+            box-shadow: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(113, 128, 150, 0.1);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .status-icon {
+            font-size: 24px;
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<!-- 第一个页面：检测页面 -->
+<div id="page1" class="container">
+    <div class="page-title">
+        <svg viewBox="0 0 24 24">
+            <path d="M19 10h1a1 1 0 011 1v10a1 1 0 01-1 1H4a1 1 0 01-1-1V11a1 1 0 011-1h1V9a7 7 0 1114 0v1zM5 12v8h14v-8H5zm6 2h2v4h-2v-4zm6-4V9A5 5 0 007 9v1h10z"/>
+        </svg>
+        <h1>校园网连接检测</h1>
+    </div>
+    
+    <p>正在检测您的校园网连接状态...</p>
+
+    <div id="status" class="status-container">
+        <span class="loading"></span>
+        <span>检测中...</span>
+    </div>
+
+    <div id="disconnectedMessage" class="hidden">
+        <p>未检测到校园网连接</p>
+        <p>您可以通过下方按钮获取签到二维码</p>
+    </div>
+    <button id="toPage2" class="btn">获取签到二维码</button>
+</div>
+
+<div id="page2" class="container hidden">
+    <div class="page-title">
+        <svg viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+        <h1>扫码签到</h1>
+    </div>
+    
+    <p>使用手机扫描下方二维码完成签到或签退</p>
+
+    <div class="qr-container">
+        <div id="qrMask" class="qr-mask">
+            <div class="qr-mask-content">
+                <div class="loading"></div>
+                <div id="qr-status">正在连接服务器...</div>
+            </div>
+        </div>
+        <canvas id="qrcode"></canvas>
+    </div>
+
+    <div class="timer">
+        <span>二维码有效期: </span>
+        <span id="countdown">10</span>
+        <span>秒</span>
+    </div>
+
+    <button id="backBtn" class="btn back-btn">返回检测页面</button>
+</div>
+
+<script src="qrcode.min.js"></script>
+<script>
+    // 页面元素
+    const page1 = document.getElementById("page1");
+    const page2 = document.getElementById("page2");
+    const statusDiv = document.getElementById("status");
+    const disconnectedMessage = document.getElementById("disconnectedMessage");
+    const toPage2Btn = document.getElementById("toPage2");
+    const backBtn = document.getElementById("backBtn");
+    const countdown = document.getElementById("countdown");
+    const qrcodeDiv = document.getElementById("qrcode");
+    const qrMask = document.getElementById("qrMask");
+    const mask = document.getElementById("qr-status");
+    const wss_url = `wss://qrcode.tariky.cn:443/wss`;
+    let token_timestamp = 0;
+    const token_expires = 10;
+    let ws = null;
+    let intervalId = null;
+
+    function mask_display(display) {
+        if (display === false) {
+            qrMask.style.display = "none";
+        } else {
+            mask.textContent = display;
+            qrMask.style.display = "flex";
+        }
+    }
+
+    // 检测校园网连接状态
+    async function checkConnection() {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+
+        try {
+            statusDiv.innerHTML = `
+                <span class="loading"></span>
+                <span>正在检测校园网连接...</span>
+            `;
+            statusDiv.className = "status-container";
+
+
+            await fetch("http://10.30.12.21:8800/chair-qrcode", {
+                method: "HEAD",
+                mode: "no-cors",
+                cache: "no-cache",
+                signal: controller.signal
+            });
+
+            clearTimeout(timeoutId);
+
+            // 连接成功
+            statusDiv.innerHTML = `
+                <span style="color: var(--success-color);">✓</span>
+                <span>已连接校园网，正在跳转...</span>
+            `;
+            statusDiv.classList.add("connected");
+
+
+            setTimeout(() => {
+                window.location.href = "http://10.30.12.21:8800/chair-qrcode";
+            }, 1000);
+
+        } catch (error) {
+            clearTimeout(timeoutId);
+
+            if (error.name === "AbortError") {
+                statusDiv.innerHTML = `
+                    <span style="color: var(--warning-color);">⏱️</span>
+                    <span>连接超时，未检测到校园网</span>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <span style="color: var(--error-color);">✗</span>
+                    <span>未连接校园网</span>
+                `;
+            }
+
+            statusDiv.classList.add("disconnected");
+            disconnectedMessage.classList.remove("hidden");
+        }
+    }
+
+    async function connect() {
+        try {
+            if (ws !== null) {
+                return;
+            }
+            mask_display("服务器连接中...");
+            ws = new WebSocket(wss_url);
+
+            ws.onopen = () => {
+                ws.send("recv");
+                intervalId = setInterval(() => {
+                    countdown.innerHTML = calculateTimeRemaining().toString();
+                }, 500)
+            };
+
+            ws.onmessage = (event) => {
+                try {
+                    const message = JSON.parse(event.data);
+                    const token = message.token;
+                    token_timestamp = message.timestamp;
+                    generateQRCode(token);
+                    mask_display(false);
+                } catch (error) {
+                    mask_display("无效二维码！");
+                }
+            };
+
+            ws.onclose = () => {
+                clearInterval(intervalId);
+                if (page2.classList.contains("hidden")) {
+                    ws = null;
+                } else {
+                    mask_display("服务器连接中...");
+                    setTimeout(() => {
+                        if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+                            ws = null;
+                            connect();
+                        }
+                    }, 1000);
+                }
+            };
+        } catch (error) {
+            console.error("连接错误:", error);
+        }
+    }
+
+    // 生成二维码
+    function generateQRCode(token) {
+        const fullToken = token + ",CS_CAMPUS";
+        qrcodeDiv.innerHTML = "";
+        QRCode.toCanvas(qrcodeDiv, fullToken, {
+            width: 200,
+            height: 200,
+            margin: 1,
+            color: {
+                dark: "#667eea",
+                light: "#ffffff"
+            }
+        }, function (error) {
+            if (error) console.error(error);
+        });
+    }
+
+    function calculateTimeRemaining() {
+        const currentTimestamp = Math.floor(Date.now() / 1000);
+
+        const available = Math.floor(
+            currentTimestamp / token_expires
+        ) !== Math.floor(
+            token_timestamp / token_expires
+        ) ? 0 : token_expires * Math.floor(
+            token_timestamp / token_expires + 1
+        ) - currentTimestamp;
+        
+        if (available === 0) {
+            mask_display("二维码已过期！");
+        } else {
+            mask_display(false);
+        }
+
+        return available
+    }
+
+    // 页面切换
+    toPage2Btn.addEventListener("click", async () => {
+        page1.classList.add("hidden");
+        page2.classList.remove("hidden");
+        await connect();
+    });
+
+    backBtn.addEventListener("click", () => {
+        page2.classList.add("hidden");
+        page1.classList.remove("hidden");
+        if (ws !== null) {
+            ws.close();
+        }
+        checkConnection();
+    });
+
+    // 页面加载时检测连接状态
+    document.addEventListener("DOMContentLoaded", checkConnection);
+
+    // 添加窗口大小变化监听
+    window.addEventListener('resize', () => {
+        const container = document.querySelector('.container');
+        if (window.innerWidth < 480) {
+            container.style.maxWidth = 'calc(100vw - 40px)';
+        } else {
+            container.style.maxWidth = '500px';
+        }
+    });
+</script>
+</body>
+</html>

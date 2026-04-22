@@ -1,0 +1,177 @@
+---
+import { Collapse, Spoiler } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import ProjectSection from '@/components/projects/ProjectSection.astro'
+
+const headings = [
+  { depth: 2, slug: 'programs', text: 'Programs' },
+  { depth: 2, slug: 'others', text: 'Others' },
+  { depth: 2, slug: 'sponsorship', text: 'Sponsorship' }
+]
+
+const withBase = (path: string) =>
+  `${import.meta.env.BASE_URL.replace(/\/+$/, '')}/${path.replace(/^\/+/, '')}`
+---
+
+<PageLayout title='Projects' {headings}>
+  <p>Here are some interesting things.</p>
+  <h2 id='programs'>Programs</h2>
+  <ProjectSection
+    projects={[
+      {
+        name: '📚 Translate',
+        description: 'A word segmentation translation software based on tauri.',
+        links: [
+          { type: 'github', href: 'https://github.com/PengweeWang/translate' },
+          { type: 'site', href: 'https://qiumo.fun/translate/' },
+          { type: 'release', href: 'https://github.com/PengweeWang/translate/releases' }
+        ]
+      },
+      {
+        name: '☑ Todo-ai',
+        description: 'Todo-ai is a command-line to-do tool with LLM enhanced capabilities',
+        links: [
+          { type: 'github', href: 'https://github.com/PengweeWang/todo-ai-cli' },
+        ]
+      },
+      {
+        name: '🐱 Meowfetch',
+        description: 'Meowfetch is a simple and lightweight system information tool written in Rust.',
+        links: [
+          { type: 'github', href: 'https://github.com/PengweeWang/meowfetch' },
+          { type: 'release', href: 'https://github.com/PengweeWang/meowfetch/releases' }
+        ]
+      }
+    ]}
+  />
+  <h2 id='others'>Others</h2>
+  <Collapse title='Mini Games'>
+    <ProjectSection
+      projects={[
+        {
+          name: 'Pacman',
+          description: '吃豆人小游戏',
+          links: [{ type: 'site', href: withBase('tools/pacman/') }]
+        },
+        {
+          name: 'Puzzle',
+          description: '一个简单的拼图',
+          links: [{ type: 'site', href: withBase('tools/puzzle/') }]
+        },
+        {
+          name: 'Snake',
+          description: '贪吃蛇小游戏',
+          links: [{ type: 'site', href: withBase('tools/snake/') }]
+        },
+        {
+          name: 'Backrooms',
+          description: '未完成的后室',
+          links: [{ type: 'site', href: withBase('tools/threejs/backrooms/') }]
+        }
+      ]}
+    />
+  </Collapse>
+  <Collapse title='Mini Tools'>
+    <ProjectSection
+      projects={[
+        {
+          name: 'arXiv PDF',
+          description: 'arXiv PDF 加速下载',
+          links: [{ type: 'site', href: withBase('tools/arxiv/') }]
+        },
+        {
+          name: '文件下载',
+          description: '下载文件',
+          links: [{ type: 'site', href: withBase('tools/prox_download/') }]
+        },
+        {
+          name: 'ImageNet Query',
+          description: 'ImageNet类别查询工具',
+          links: [{ type: 'site', href: withBase('tools/imagenet_query/') }]
+        },
+        {
+          name: '不背习概',
+          description: '习概刷题工具',
+          links: [{ type: 'site', href: withBase('tools/bbxg/') }]
+        },
+        {
+          name: 'Zhihuishu Exam Export',
+          description: '智慧树试题导出工具',
+          links: [{ type: 'site', href: withBase('tools/zhihuishu_exam_export/') }]
+        },
+        {
+          name: 'CRT image generater',
+          description: 'CRT效果图片生成器',
+          links: [{ type: 'site', href: withBase('tools/crt/') }]
+        },
+        {
+          name: 'Markdown Editor',
+          description: '在线markdown编辑器',
+          links: [{ type: 'site', href: withBase('tools/md_editor/') }]
+        },
+        {
+          name: 'Chartjs',
+          description: 'chartjs图表测试',
+          links: [{ type: 'site', href: withBase('tools/chartjs/') }]
+        },
+        {
+          name: 'Clock',
+          description: '一个时钟',
+          links: [{ type: 'site', href: withBase('tools/clock/') }]
+        },
+        {
+          name: 'Pixiv illustrations',
+          description: '基于pixiv.re的pixiv图片查看工具',
+          links: [{ type: 'site', href: withBase('tools/pixiv/') }]
+        },
+        {
+          name: 'EMI Simulate',
+          description: '电磁波在媒质间反射和折射仿真',
+          links: [{ type: 'site', href: withBase('tools/simulate/') }]
+        },
+        {
+          name: 'Tarot',
+          description: '使用deepseek api进行AI占卜的赛博祈福器',
+          links: [{ type: 'site', href: withBase('tools/tarot/') }]
+        },
+        {
+          name: 'Terminal Art Creator',
+          description: '绘制像素画并导出终端字符',
+          links: [{ type: 'site', href: withBase('tools/terminal_art_creator/') }]
+        },
+        {
+          name: '小红薯',
+          description: '小红书无水印图片下载',
+          links: [{ type: 'site', href: withBase('tools/xiaohongshu/') }]
+        },
+        {
+          name: 'Cube',
+          description: '只是一个方块',
+          links: [{ type: 'site', href: withBase('tools/threejs/cube/') }]
+        },
+        {
+          name: 'Light',
+          description: '基于three.js的光照测试',
+          links: [{ type: 'site', href: withBase('tools/threejs/light/') }]
+        },
+        {
+          name: 'SARMS',
+          description: '信息系统课设作品',
+          links: [{ type: 'site', href: '/sarms/' }]
+        }
+      ]}
+    />
+  </Collapse>
+
+  <h2 id='sponsorship'>Sponsorship</h2>
+  
+  <p>
+    Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum
+    dissentiunt, cu meliore fuisset mei, vel quod voluptua ne.
+  </p>
+
+  <Collapse title='QrCode'>
+    <Spoiler>haha, 这里并没有二维码</Spoiler>
+  </Collapse>
+
+</PageLayout>

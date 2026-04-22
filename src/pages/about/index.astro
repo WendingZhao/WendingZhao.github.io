@@ -1,0 +1,52 @@
+---
+import { Button, Collapse, Spoiler, Timeline } from 'astro-pure/user'
+import PageLayout from '@/layouts/CommonPage.astro'
+import Substats from '@/components/about/Substats.astro'
+
+const headings = [
+  { depth: 2, slug: 'About', text: 'About' },
+  { depth: 2, slug: 'hobbies', text: 'Hobbies' },
+  { depth: 2, slug: 'social-networks', text: 'Social Networks' },
+  { depth: 2, slug: 'sponsorship', text: 'Sponsorship' }
+]
+---
+
+<PageLayout title='About' {headings}>
+  <p>Developer / M.S.E.</p>
+  <p>
+    Postgraduate in Information and Communication Engineering at the National University of Defense Technology, 
+    with research interests in Cross-Modal Vision-Language Understanding, 
+    and passionate about web development, application design, and hardware projects with microcontrollers.
+  </p>
+  <p>
+    Motto: Time waits for no one. <Spoiler>So we must seize the day.</Spoiler>
+  </p>
+
+
+  {/* general-talk */}
+<h2 id='hobbies'>Hobbies</h2>
+<ul>
+  <li>Web development</li>
+  <li>Application design</li>
+  <li>Hardware projects with microcontrollers</li>
+  <li>Everything interesting</li>
+</ul>
+
+  {/* social-networks */}
+  <h2 id='social-networks'>Social Networks</h2>
+  <p>
+    Welcome to follow my GitHub for projects, research, and interesting tech creations.
+  </p>
+  <Substats
+    stats={[
+      {
+        platform: 'GitHub',
+        icon: 'github',
+        link: 'https://github.com/PengweeWang',
+        text: 'followers',
+        api: 'github/PengweeWang'
+      }
+    ]}
+  />
+
+</PageLayout>

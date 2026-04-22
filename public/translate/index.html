@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translate - 智能划词翻译工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36CFC9',
+                        accent: '#FF7D00',
+                        dark: '#1D2129',
+                        light: '#F2F3F5'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-shadow {
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .transition-transform {
+                transition-property: transform;
+                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                transition-duration: 300ms;
+            }
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    </style>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        .hero-bg {
+            background: linear-gradient(135deg, #165DFF10 0%, #36CFC910 100%);
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(22, 93, 255, 0.3);
+        }
+        
+        .screenshot-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 20px 80px -20px rgba(22, 93, 255, 0.25);
+        }
+        
+        .screenshot-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(transparent 70%, rgba(0,0,0,0.1));
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body class="bg-white text-dark">
+    <!-- 导航栏 -->
+    <header class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 rounded-lg wg-primary flex items-center justify-center">
+                            <img src="./翻译.svg" 
+                            alt="翻译图标" 
+                            class="w-6 h-6 object-contain">
+                    </div>
+                    <span class="text-xl font-bold text-dark">Translate</span>
+                </div>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-primary transition-colors">功能</a>
+                    <a href="#usage" class="text-gray-600 hover:text-primary transition-colors">使用方法</a>
+                    <a href="#download" class="text-gray-600 hover:text-primary transition-colors">下载</a>
+                    <a href="https://github.com/PengweeWang/translate/releases/" target="_blank" class="text-gray-600 hover:text-primary transition-colors">
+                        <i class="fa fa-github text-xl"></i>
+                    </a>
+                </nav>
+                
+                <div class="md:hidden">
+                    <button id="menu-toggle" class="text-gray-600 hover:text-primary">
+                        <i class="fa fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t">
+            <div class="container mx-auto px-4 py-3 space-y-3">
+                <a href="#features" class="block text-gray-600 hover:text-primary transition-colors py-2">功能</a>
+                <a href="#usage" class="block text-gray-600 hover:text-primary transition-colors py-2">使用方法</a>
+                <a href="#download" class="block text-gray-600 hover:text-primary transition-colors py-2">下载</a>
+                <a href="https://github.com/PengweeWang/translate/releases/" target="_blank" class="block text-gray-600 hover:text-primary transition-colors py-2">
+                    <i class="fa fa-github mr-2"></i> GitHub
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 英雄区 -->
+    <section class="hero-bg pt-32 pb-20 md:pt-40 md:pb-32">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-dark mb-6">
+                        简单高效的<br><span class="text-primary">划词翻译</span>工具
+                    </h1>
+                    <p class="text-lg text-gray-600 mb-8 max-w-lg">
+                        基于Tauri开发的轻量级翻译软件，支持划词翻译、Markdown与公式渲染，让阅读外文资料变得轻松简单。
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <a href="#download" class="download-btn bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all flex items-center">
+                            <i class="fa fa-download mr-2"></i> 立即下载
+                        </a>
+                        <a href="#features" class="bg-white border border-gray-300 hover:border-primary text-dark font-medium px-6 py-3 rounded-lg transition-all flex items-center">
+                            <i class="fa fa-list-ul mr-2"></i> 了解更多
+                        </a>
+                    </div>
+                    <div class="mt-8 flex items-center text-gray-500 text-sm">
+                        <span class="mr-4"><i class="fa fa-check-circle text-primary mr-1"></i> 支持Windows、macOS、Linux</span>
+                        <span><i class="fa fa-check-circle text-primary mr-1"></i> 开源免费</span>
+                    </div>
+                </div>
+                <div class="md:w-1/2 screenshot-container">
+                    <img src="./display.png" alt="Translate软件截图" class="w-full h-auto rounded-lg">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能特点 -->
+    <section id="features" class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">强大功能，简单操作</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">精心设计的功能，让翻译体验更加流畅自然</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 功能卡片1 -->
+                <div class="feature-card bg-light rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-mouse-pointer text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">划词翻译</h3>
+                    <p class="text-gray-600">选中任意文本，双击即可快速翻译，支持多种翻译API，满足不同场景需求。</p>
+                </div>
+                
+                <!-- 功能卡片2 -->
+                <div class="feature-card bg-light rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-markdown text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Markdown渲染</h3>
+                    <p class="text-gray-600">完美支持Markdown格式内容展示，让翻译结果保留原始排版，阅读更舒适。</p>
+                </div>
+                
+                <!-- 功能卡片3 -->
+                <div class="feature-card bg-light rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-calculator text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">公式渲染</h3>
+                    <p class="text-gray-600">内置KaTeX公式渲染引擎，轻松展示复杂数学公式，学术文献翻译不再困扰。</p>
+                </div>
+                
+                <!-- 功能卡片4 -->
+                <div class="feature-card bg-light rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-keyboard-o text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">快捷键支持</h3>
+                    <p class="text-gray-600">Capslock划词，Alt键拖动窗口，自定义快捷键，操作效率倍增。</p>
+                </div>
+                
+                <!-- 功能卡片5 -->
+                <div class="feature-card bg-light rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-sliders text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">灵活配置</h3>
+                    <p class="text-gray-600">支持多API配置，可根据需求选择翻译服务，满足个性化使用习惯。</p>
+                </div>
+                
+                <!-- 功能卡片6 -->
+                <div class="feature-card bg-light rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div class="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fa fa-bolt text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">轻量高效</h3>
+                    <p class="text-gray-600">基于Tauri框架开发，资源占用低，启动速度快，不打扰你的工作流。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 支持的API -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl font-bold mb-4">支持多种翻译API</h2>
+                <p class="text-gray-600">灵活选择，满足不同场景需求</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-12">
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-rocket text-3xl text-gray-600"></i>
+                    </div>
+                    <h3 class="font-medium">Deepseek</h3>
+                </div>
+                
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-fire text-3xl text-gray-600"></i>
+                    </div>
+                    <h3 class="font-medium">火山引擎</h3>
+                </div>
+                
+                <div class="flex flex-col items-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-plus-circle text-3xl text-gray-600"></i>
+                    </div>
+                    <h3 class="font-medium">更多API即将支持</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 使用方法 -->
+    <section id="usage" class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">简单三步，轻松使用</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">快速上手，即刻体验高效翻译</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- 步骤1 -->
+                <div class="relative">
+                    <div class="bg-light rounded-xl p-6 h-full">
+                        <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-xl font-bold mb-6">1</div>
+                        <h3 class="text-xl font-semibold mb-4">下载安装</h3>
+                        <p class="text-gray-600">下载对应系统的安装包，按照指引完成安装，启动应用程序。</p>
+                    </div>
+                    <!-- 连接线 -->
+                    <div class="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-8 h-0.5 bg-primary/20"></div>
+                </div>
+                
+                <!-- 步骤2 -->
+                <div class="relative">
+                    <div class="bg-light rounded-xl p-6 h-full">
+                        <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-xl font-bold mb-6">2</div>
+                        <h3 class="text-xl font-semibold mb-4">配置API</h3>
+                        <p class="text-gray-600">通过系统托盘打开配置文件，填入申请的API Key，支持Deepseek和火山引擎。</p>
+                    </div>
+                    <!-- 连接线 -->
+                    <div class="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 w-8 h-0.5 bg-primary/20"></div>
+                </div>
+                
+                <!-- 步骤3 -->
+                <div>
+                    <div class="bg-light rounded-xl p-6 h-full">
+                        <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-xl font-bold mb-6">3</div>
+                        <h3 class="text-xl font-semibold mb-4">开始使用</h3>
+                        <p class="text-gray-600">选中任意文本，双击即可翻译。使用Capslock键触发，Alt键可拖动窗口调整位置。</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-16 bg-gray-50 rounded-xl p-8">
+                <h3 class="text-xl font-semibold mb-6">快捷键说明</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex items-center">
+                        <div class="bg-white px-3 py-1 rounded text-sm font-mono mr-4">Capslock</div>
+                        <span>划词翻译弹窗</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-white px-3 py-1 rounded text-sm font-mono mr-4">双击</div>
+                        <span>触发翻译</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-white px-3 py-1 rounded text-sm font-mono mr-4">Alt + 鼠标拖动</div>
+                        <span>调整窗口位置</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="bg-white px-3 py-1 rounded text-sm font-mono mr-4">系统托盘菜单</div>
+                        <span>配置/启用/禁用/退出</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 下载区域 -->
+    <section id="download" class="py-20 bg-primary/5">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">立即下载</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">支持多平台，选择适合你的版本</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <!-- Windows -->
+                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all text-center">
+                    <div class="w-16 h-16 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-windows text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Windows</h3>
+                    <p class="text-gray-500 text-sm mb-6">支持 Windows 10 及以上版本</p>
+                    <a href="https://github.com/PengweeWang/translate/releases/" class="download-btn inline-block bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all flex items-center justify-center">
+                        <i class="fa fa-download mr-2"></i> 下载安装包
+                    </a>
+                </div>
+                
+                <!-- macOS -->
+                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all text-center">
+                    <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-apple text-gray-800 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">macOS</h3>
+                    <p class="text-gray-500 text-sm mb-6">支持 macOS 10.15 及以上版本</p>
+                    <a href="#" class="download-btn inline-block bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all flex items-center justify-center">
+                        <i class="fa fa-download mr-2"></i> 从源代码构建
+                    </a>
+                </div>
+                
+                <!-- Linux -->
+                <div class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all text-center">
+                    <div class="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fa fa-linux text-gray-800 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2">Linux</h3>
+                    <p class="text-gray-500 text-sm mb-6">支持主流 Linux 发行版</p>
+                    <a href="#" class="download-btn inline-block bg-primary hover:bg-primary/90 text-white font-medium px-6 py-3 rounded-lg transition-all flex items-center justify-center">
+                        <i class="fa fa-download mr-2"></i> 从源代码构建
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-12 text-center">
+                <a href="https://github.com/PengweeWang/translate" target="_blank" class="inline-flex items-center text-primary hover:text-primary/80 font-medium transition-colors">
+                    <i class="fa fa-github mr-2"></i> 查看GitHub仓库
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-6 md:mb-0">
+                    <div class="w-10 h-10 rounded-lg bg-white flex items-center justify-center">
+                        <img src="./翻译.svg" 
+                        alt="翻译图标" 
+                        class="w-6 h-6 object-contain">
+                    </div>
+                    <span class="text-xl font-bold">Translate</span>
+                </div>
+                
+                
+                <div class="text-gray-400 text-sm">
+                    &copy; 2025 Translate. 保留所有权利。
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('py-2');
+                header.classList.remove('py-4');
+                header.classList.add('shadow');
+            } else {
+                header.classList.add('py-4');
+                header.classList.remove('py-2');
+                header.classList.remove('shadow');
+            }
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动菜单
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

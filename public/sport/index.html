@@ -1,0 +1,2304 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>E路向前 云动2026 - 线上长跑活动</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap"
+            rel="stylesheet"
+        />
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+        <meta property="og:title" content="E路向前 云动2026" />
+        <meta property="og:description" content="快来参加吧！" />
+        <meta
+            property="og:image"
+            content="https://www.tariky.cn/sport/logo.png"
+        />
+        <meta property="og:url" content="https://www.tariky.cn/sport" />
+        <meta property="og:type" content="website" />
+
+        <!-- 图片尺寸信息（提升识别率） -->
+        <meta property="og:image:width" content="154" />
+        <meta property="og:image:height" content="154" />
+
+        <!-- 微信兼容优化 -->
+        <meta name="description" content="快来参加吧！" />
+        <link rel="canonical" href="https://www.tariky.cn/sport" />
+        <style>
+            body {
+                font-family: "Noto Sans SC", sans-serif;
+                background-color: #0a0a0a;
+                color: #ffffff;
+                overflow-x: hidden;
+            }
+
+            .gradient-text {
+                background: linear-gradient(
+                    135deg,
+                    #00f5ff 0%,
+                    #b026ff 50%,
+                    #474747 100%
+                );
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+
+            .neon-border {
+                box-shadow:
+                    0 0 20px rgba(0, 245, 255, 0.3),
+                    inset 0 0 20px rgba(0, 245, 255, 0.1);
+            }
+
+            .card-hover {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .card-hover:hover {
+                transform: translateY(-10px) scale(1.02);
+                box-shadow: 0 20px 40px rgba(0, 245, 255, 0.2);
+            }
+
+            .track-bg {
+                background-image:
+                    linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8)),
+                    url("/sport/35c0f2aa96a7ee8cf182ffc22f30551678306225.jpg");
+                background-size: cover;
+                background-position: center;
+                background-attachment: fixed;
+            }
+
+            .countdown-box {
+                background: rgba(255, 255, 255, 0.05);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+
+            .prize-card {
+                background: linear-gradient(
+                    135deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    rgba(255, 255, 255, 0.05) 100%
+                );
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            }
+
+            .glitch {
+                position: relative;
+            }
+
+            .glitch::before,
+            .glitch::after {
+                content: attr(data-text);
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+            }
+
+            .glitch::before {
+                left: 2px;
+                text-shadow: -2px 0 #ff00c1;
+                clip: rect(44px, 450px, 56px, 0);
+                animation: glitch-anim 5s infinite linear alternate-reverse;
+            }
+
+            .glitch::after {
+                left: -2px;
+                text-shadow: -2px 0 #00fff9;
+                clip: rect(44px, 450px, 56px, 0);
+                animation: glitch-anim2 5s infinite linear alternate-reverse;
+            }
+
+            @keyframes glitch-anim {
+                0% {
+                    clip: rect(31px, 9999px, 94px, 0);
+                }
+                20% {
+                    clip: rect(62px, 9999px, 12px, 0);
+                }
+                40% {
+                    clip: rect(15px, 9999px, 75px, 0);
+                }
+                60% {
+                    clip: rect(89px, 9999px, 23px, 0);
+                }
+                80% {
+                    clip: rect(3px, 9999px, 68px, 0);
+                }
+                100% {
+                    clip: rect(54px, 9999px, 96px, 0);
+                }
+            }
+
+            @keyframes glitch-anim2 {
+                0% {
+                    clip: rect(65px, 9999px, 99px, 0);
+                }
+                20% {
+                    clip: rect(12px, 9999px, 43px, 0);
+                }
+                40% {
+                    clip: rect(78px, 9999px, 11px, 0);
+                }
+                60% {
+                    clip: rect(23px, 9999px, 89px, 0);
+                }
+                80% {
+                    clip: rect(56px, 9999px, 34px, 0);
+                }
+                100% {
+                    clip: rect(91px, 9999px, 12px, 0);
+                }
+            }
+
+            .particle {
+                position: absolute;
+                width: 4px;
+                height: 4px;
+                background: #00f5ff;
+                border-radius: 50%;
+                pointer-events: none;
+                opacity: 0;
+            }
+
+            .route-pattern {
+                background-image: radial-gradient(
+                    circle at 2px 2px,
+                    rgba(0, 245, 255, 0.3) 2px,
+                    transparent 0
+                );
+                background-size: 40px 40px;
+            }
+
+            .tab-active {
+                background: linear-gradient(90deg, #00f5ff, #b026ff);
+                color: white;
+            }
+
+            .scroll-indicator {
+                animation: bounce 2s infinite;
+            }
+
+            @keyframes bounce {
+                0%,
+                20%,
+                50%,
+                80%,
+                100% {
+                    transform: translateY(0);
+                }
+                40% {
+                    transform: translateY(-10px);
+                }
+                60% {
+                    transform: translateY(-5px);
+                }
+            }
+
+            /* Fix navbar width overflow on mobile */
+            #navbar {
+                max-width: 100vw;
+                left: 0;
+                right: 0;
+                box-sizing: border-box;
+            }
+
+            #navbar.-translate-y-full {
+                transform: translateY(-100%);
+            }
+
+            #mobileMenu {
+                max-width: 100vw;
+                box-sizing: border-box;
+            }
+
+            /* Ensure no horizontal scroll during transitions */
+            html,
+            body {
+                overflow-x: hidden;
+                width: 100%;
+            }
+        </style>
+    </head>
+    <body class="antialiased">
+        <!-- Navigation -->
+        <nav
+            id="navbar"
+            class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-white/10 transform -translate-y-full will-change-transform transition-transform duration-200 ease-out overflow-x-hidden"
+        >
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div
+                        class="flex-shrink-0 flex items-center gap-1 sm:gap-2 min-w-0"
+                    >
+                        <img
+                            src="/sport/logo.png"
+                            alt="Logo"
+                            class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover flex-shrink-0"
+                        />
+                        <span
+                            class="font-bold text-sm sm:text-lg tracking-wider truncate"
+                            >云动2026</span
+                        >
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:block">
+                        <div
+                            class="ml-10 flex items-baseline space-x-2 lg:space-x-4"
+                        >
+                            <a
+                                href="#about"
+                                class="hover:text-cyan-400 transition-colors px-2 py-2 rounded-md text-xs sm:text-sm font-medium"
+                                >活动介绍</a
+                            >
+                            <a
+                                href="#tracks"
+                                class="hover:text-cyan-400 transition-colors px-2 py-2 rounded-md text-xs sm:text-sm font-medium"
+                                >六大奖项</a
+                            >
+                            <a
+                                href="#prizes"
+                                class="hover:text-cyan-400 transition-colors px-2 py-2 rounded-md text-xs sm:text-sm font-medium"
+                                >奖品设置</a
+                            >
+                            <a
+                                href="#rules"
+                                class="hover:text-cyan-400 transition-colors px-2 py-2 rounded-md text-xs sm:text-sm font-medium"
+                                >活动规则</a
+                            >
+                            <button
+                                onclick="openQRModal()"
+                                class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white px-3 lg:px-4 py-2 rounded-full font-medium transition-all transform hover:scale-105 shadow-lg shadow-cyan-500/30 text-xs sm:text-sm"
+                            >
+                                立即报名
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Menu Button -->
+                    <div class="md:hidden flex-shrink-0">
+                        <button
+                            onclick="toggleMobileMenu()"
+                            class="text-white hover:text-cyan-400 transition-colors p-2"
+                        >
+                            <svg
+                                class="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 6h16M4 12h16M4 18h16"
+                                ></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div
+                id="mobileMenu"
+                class="hidden md:hidden bg-black/95 backdrop-blur-md border-t border-white/10 w-full"
+            >
+                <div class="px-4 py-3 space-y-2">
+                    <a
+                        href="#about"
+                        class="block hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium"
+                        >活动介绍</a
+                    >
+                    <a
+                        href="#tracks"
+                        class="block hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium"
+                        >六大奖项</a
+                    >
+                    <a
+                        href="#prizes"
+                        class="block hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium"
+                        >奖品设置</a
+                    >
+                    <a
+                        href="#rules"
+                        class="block hover:text-cyan-400 transition-colors px-3 py-2 rounded-md text-sm font-medium"
+                        >活动规则</a
+                    >
+                    <button
+                        onclick="
+                            openQRModal();
+                            toggleMobileMenu();
+                        "
+                        class="w-full mt-4 bg-gradient-to-r from-cyan-500 to-purple-600 hover:from-cyan-400 hover:to-purple-500 text-white px-6 py-3 rounded-full font-medium transition-all"
+                    >
+                        立即报名
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section
+            class="relative h-screen flex items-center justify-center overflow-hidden track-bg"
+        >
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-black"
+            ></div>
+
+            <!-- Animated Particles Container -->
+            <div
+                id="particles"
+                class="absolute inset-0 pointer-events-none"
+            ></div>
+
+            <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
+                <div class="mb-6 inline-block">
+                    <span
+                        class="px-4 py-1 rounded-full border border-cyan-500/50 text-cyan-400 text-sm font-medium tracking-widest uppercase bg-cyan-500/10"
+                    >
+                        电子科学学院学员二大队
+                    </span>
+                </div>
+
+                <h1
+                    class="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black mb-4 sm:mb-6 leading-tight glitch"
+                    data-text="E路向前"
+                >
+                    <span class="gradient-text">E路向前</span><br />
+                    <span class="text-white">云动2026</span>
+                </h1>
+
+                <p
+                    class="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-300 mb-6 sm:mb-8 max-w-2xl mx-auto font-light px-2"
+                >
+                    纪念长征胜利90周年 · 礼赞电子科学学院建院65周年<br />
+                        <span class="text-cyan-400 font-medium"
+                            >4月1日 - 4月30日</span
+                        >
+                    线上长跑挑战赛
+                </p>
+
+                <!-- Countdown Timer -->
+                <div
+                    class="grid grid-cols-4 gap-2 sm:gap-4 max-w-2xl mx-auto mb-8 sm:mb-12 px-2"
+                >
+                    <div
+                        class="countdown-box rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center"
+                    >
+                        <div
+                            id="days"
+                            class="text-xl sm:text-3xl md:text-4xl font-bold text-cyan-400"
+                        >
+                            00
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">天</div>
+                    </div>
+                    <div
+                        class="countdown-box rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center"
+                    >
+                        <div
+                            id="hours"
+                            class="text-xl sm:text-3xl md:text-4xl font-bold text-purple-400"
+                        >
+                            00
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">时</div>
+                    </div>
+                    <div
+                        class="countdown-box rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center"
+                    >
+                        <div
+                            id="minutes"
+                            class="text-xl sm:text-3xl md:text-4xl font-bold text-pink-400"
+                        >
+                            00
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">分</div>
+                    </div>
+                    <div
+                        class="countdown-box rounded-xl sm:rounded-2xl p-2 sm:p-4 text-center"
+                    >
+                        <div
+                            id="seconds"
+                            class="text-xl sm:text-3xl md:text-4xl font-bold text-yellow-400"
+                        >
+                            00
+                        </div>
+                        <div class="text-xs text-gray-400 mt-1">秒</div>
+                    </div>
+                </div>
+
+                <div
+                    class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center px-4"
+                >
+                    <button
+                        onclick="scrollToSection('tracks')"
+                        class="px-6 sm:px-8 py-3 sm:py-4 bg-white text-black rounded-full font-bold text-base sm:text-lg hover:bg-gray-200 transition-all transform hover:scale-105 shadow-2xl"
+                    >
+                        选择赛道
+                    </button>
+                    <button
+                        onclick="openQRModal()"
+                        class="px-6 sm:px-8 py-3 sm:py-4 border-2 border-cyan-500 text-cyan-400 rounded-full font-bold text-base sm:text-lg hover:bg-cyan-500/10 transition-all"
+                    >
+                        查看详情
+                    </button>
+                </div>
+            </div>
+
+            <div
+                class="absolute bottom-10 left-1/2 transform -translate-x-1/2 scroll-indicator"
+            >
+                <svg
+                    class="w-6 h-6 text-white/50"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                    ></path>
+                </svg>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="py-24 relative route-pattern">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-6 reveal-left">
+                        <h2 class="text-4xl md:text-5xl font-bold mb-6">
+                            以奔跑致敬长征<br />
+                            <span class="text-cyan-400">礼赞电子铁军精神</span>
+                        </h2>
+                        <p class="text-gray-400 text-lg leading-relaxed">
+                            值此长征胜利90周年、电子科学学院建院65周年之际，让我们以奔跑姿态，用坚实脚步去丈量，在数字云端呈现，致敬伟大长征壮举、礼赞“电子铁军”精神！以奔跑姿态激昂青春！
+                        </p>
+
+                        <div class="grid grid-cols-3 gap-4 pt-6">
+                            <div
+                                class="text-center p-4 bg-white/5 rounded-xl border border-white/10"
+                            >
+                                <div
+                                    class="text-3xl font-bold text-cyan-400 mb-1"
+                                >
+                                    30
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    活动天数
+                                </div>
+                            </div>
+                            <div
+                                class="text-center p-4 bg-white/5 rounded-xl border border-white/10"
+                            >
+                                <div
+                                    class="text-3xl font-bold text-purple-400 mb-1"
+                                >
+                                    6
+                                </div>
+                                <div class="text-sm text-gray-500">
+                                    竞赛奖项
+                                </div>
+                            </div>
+                            <div
+                                class="text-center p-4 bg-white/5 rounded-xl border border-white/10"
+                            >
+                                    <div
+                                        class="text-xl font-bold text-pink-400 mb-1"
+                                    >
+                                        ¥10,490
+                                    </div>
+                                    <div class="text-sm text-gray-500">奖金池</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
+                            <div
+                                class="p-4 bg-white/5 rounded-xl border border-white/10"
+                            >
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-lg">👥</span>
+                                    <span class="text-sm font-semibold text-cyan-400">参与人员</span>
+                                </div>
+                                <p class="text-gray-400 text-sm leading-relaxed">
+                                    二大队全体学员、教职工及家属，诚邀志同道合的朋友们一同参与
+                                </p>
+                            </div>
+                            <div
+                                class="p-4 bg-white/5 rounded-xl border border-white/10"
+                            >
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="text-lg">📍</span>
+                                    <span class="text-sm font-semibold text-purple-400">活动地点</span>
+                                </div>
+                                <p class="text-gray-400 text-sm leading-relaxed">
+                                    自由选择跑步路线和场所，如健身房、学校操场、校园道路、公园等，确保安全即可
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="relative reveal-right">
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-3xl blur-3xl opacity-30"
+                        ></div>
+                        <img
+                            src="/sport/379e98a1ebdc01448b3ab46808d84e26165efc91.jpg"
+                            alt="Running"
+                            class="relative rounded-3xl shadow-2xl border border-white/10 w-full object-cover h-[400px]"
+                        />
+
+                        <div
+                            class="absolute -bottom-6 -left-0 bg-black/90 backdrop-blur-xl p-6 rounded-2xl border border-white/20 shadow-2xl max-w-xs"
+                        >
+                            <div class="flex items-center gap-3 mb-2">
+                                <div
+                                    class="w-2 h-2 bg-green-500 rounded-full animate-pulse"
+                                ></div>
+                                <span class="text-sm font-medium text-gray-300"
+                                    >报名进行中</span
+                                >
+                            </div>
+                            <p class="text-white font-bold">
+                                活动结束前均可报名
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tracks Section -->
+        <section id="tracks" class="py-24 bg-black relative overflow-hidden">
+            <div
+                class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"
+            ></div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="text-center mb-12 sm:mb-16 reveal-up">
+                    <h2
+                        class="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4"
+                    >
+                        六大竞赛奖项
+                    </h2>
+                    <p class="text-gray-400 text-base sm:text-lg px-4">
+                        选择适合你的挑战方式，每人限报一个赛道
+                    </p>
+                </div>
+
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6"
+                >
+                    <!-- Award 1: 电科飞人·卓越奖 -->
+                    <div
+                        class="group relative bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-6 card-hover overflow-hidden"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-14 h-14 bg-cyan-500/20 rounded-xl flex items-center justify-center mb-4 text-cyan-400 text-2xl"
+                            >
+                                🏃
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-white">
+                                最强挑战奖
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                30天内累计里程达到200公里，按个人总里程排名
+                            </p>
+                            <div
+                                class="flex items-center text-cyan-400 text-sm font-medium"
+                            >
+                                <span>里程挑战</span>
+                                <svg
+                                    class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Award 2: 征途万里·征程奖 -->
+                    <div
+                        class="group relative bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-6 card-hover overflow-hidden"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-14 h-14 bg-purple-500/20 rounded-xl flex items-center justify-center mb-4 text-purple-400 text-2xl"
+                            >
+                                🛤️
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-white">
+                                数字征程奖
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                开展"数字长征25000里"数据接力，全大队总里程目标12500公里，活动结束按个人总里程排名
+                            </p>
+                            <div
+                                class="flex items-center text-purple-400 text-sm font-medium"
+                            >
+                                <span>数据接力</span>
+                                <svg
+                                    class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Award 3: E路同行·协作奖 -->
+                    <div
+                        class="group relative bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-6 card-hover overflow-hidden"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-green-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center mb-4 text-green-400 text-2xl"
+                            >
+                                👥
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-white">
+                                师生协作奖
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                以教研室为单位（导师+学生，每组3人），接力完成65公里次数最多者排名（次数相同按总里程）
+                            </p>
+                            <div
+                                class="flex items-center text-green-400 text-sm font-medium"
+                            >
+                                <span>师生协作</span>
+                                <svg
+                                    class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Award 4: 云动达人·勤奋奖 -->
+                    <div
+                        class="group relative bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-6 card-hover overflow-hidden"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-pink-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-14 h-14 bg-pink-500/20 rounded-xl flex items-center justify-center mb-4 text-pink-400 text-2xl"
+                            >
+                                📅
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-white">
+                                全勤打卡奖
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                每次跑2KM或20分钟以上视为打卡成功，按总打卡数排名（打卡数相同按里程）
+                            </p>
+                            <div
+                                class="flex items-center text-pink-400 text-sm font-medium"
+                            >
+                                <span>全勤打卡</span>
+                                <svg
+                                    class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Award 5: 轨迹大师·创意奖 -->
+                    <div
+                        class="group relative bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-6 card-hover overflow-hidden"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-yellow-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-14 h-14 bg-yellow-500/20 rounded-xl flex items-center justify-center mb-4 text-yellow-400 text-2xl"
+                            >
+                                🎨
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-white">
+                                最具创意奖
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                跑出党徽、长征路线图、E、90、65、北斗等创意轨迹（仅限校外），大队评选
+                            </p>
+                            <div
+                                class="flex items-center text-yellow-400 text-sm font-medium"
+                            >
+                                <span>创意轨迹</span>
+                                <svg
+                                    class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Award 6: E路相伴·故事奖 -->
+                    <div
+                        class="group relative bg-gradient-to-br from-gray-900 to-black border border-white/10 rounded-2xl p-6 card-hover overflow-hidden"
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-br from-orange-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+                        ></div>
+                        <div class="relative z-10">
+                            <div
+                                class="w-14 h-14 bg-orange-500/20 rounded-xl flex items-center justify-center mb-4 text-orange-400 text-2xl"
+                            >
+                                ❤️
+                            </div>
+                            <h3 class="text-xl font-bold mb-2 text-white">
+                                最佳叙事奖
+                            </h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                2—3人小组（情侣/夫妻/亲子/家庭/好友），每周至少打卡1次（2KM或20分钟以上）；完赛提交1张照片+100字内"微故事"，大队评选
+                            </p>
+                            <div
+                                class="flex items-center text-orange-400 text-sm font-medium"
+                            >
+                                <span>叙事故事</span>
+                                <svg
+                                    class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M9 5l7 7-7 7"
+                                    ></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-12 p-6 bg-red-500/10 border border-red-500/30 rounded-2xl flex items-start gap-4"
+                >
+                    <svg
+                        class="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                        ></path>
+                    </svg>
+                    <div>
+                        <h4 class="text-red-400 font-bold mb-1">重要提醒</h4>
+                        <p class="text-gray-300 text-sm">
+                            注意保密纪律，校内使用运动软件仅记录里程，勿记录轨迹；校外跑步注意安全，尽量结伴而行。最具创意奖仅限在校外场所进行。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prizes Section -->
+        <section id="prizes" class="py-16 sm:py-24 relative">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-8 sm:mb-12 reveal-up">
+                    <h2
+                        class="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3"
+                    >
+                        丰厚奖品设置
+                    </h2>
+                    <p class="text-gray-400 text-sm sm:text-base px-4">
+                        六大奖项，各奖项均设一、二、三等奖各1名；师生协作奖、最佳叙事奖团队成员均有奖；各赛道前十名获纪念奖
+                    </p>
+                </div>
+
+                <div
+                    class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-10"
+                >
+                    <!-- 电科飞人·卓越奖 -->
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-cyan-200 to-cyan-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            🏆
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-cyan-400 mb-1"
+                        >
+                            数字征程奖
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            一等奖：华为蓝牙耳机
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥460
+                        </p>
+                        <div class="text-xs text-gray-400">数据接力排名奖</div>
+                    </div>
+
+                    <!-- 征途万里·征程奖 -->
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-400 via-purple-200 to-purple-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            🛤️
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-purple-400 mb-1"
+                        >
+                            最强挑战奖
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            一等奖：小米手表
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥460
+                        </p>
+                        <div class="text-xs text-gray-400">里程挑战排名奖</div>
+                    </div>
+
+                    <!-- E路同行·协作奖 -->
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-400 via-green-200 to-green-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            👥
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-green-400 mb-1"
+                        >
+                            师生协作奖
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            一等奖：外交官拉杆箱
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥450
+                        </p>
+                        <div class="text-xs text-gray-400">团队协作奖</div>
+                    </div>
+
+                    <!-- 云动达人·勤奋奖 -->
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-pink-400 via-pink-200 to-pink-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            🏸
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-pink-400 mb-1"
+                        >
+                            全勤打卡奖
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            一等奖：尤尼克斯天斧羽毛球拍
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥450
+                        </p>
+                        <div class="text-xs text-gray-400">勤奋打卡奖</div>
+                    </div>
+
+                    <!-- 轨迹大师·创意奖 -->
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            ⌨️
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-yellow-400 mb-1"
+                        >
+                            最具创意奖
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            一等奖：雷蛇V3键盘
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥450
+                        </p>
+                        <div class="text-xs text-gray-400">创意轨迹奖</div>
+                    </div>
+
+                    <!-- E路相伴·故事奖 -->
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-orange-200 to-orange-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            📷
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-orange-400 mb-1"
+                        >
+                            最佳叙事奖
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            一等奖：富士胶卷相机（含3卷胶卷）
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥450
+                        </p>
+                        <div class="text-xs text-gray-400">温情故事奖</div>
+                    </div>
+                </div>
+
+                <!-- 二等奖和三等奖说明 -->
+                <div
+                    class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-10"
+                >
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gray-300 via-white to-gray-300"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            🥈
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-gray-300 mb-1"
+                        >
+                            二等奖（所有奖项）
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            海尔腰部按摩仪
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥199
+                        </p>
+                        <div class="text-xs text-gray-400">每个奖项各1名</div>
+                    </div>
+
+                    <div
+                        class="prize-card rounded-xl sm:rounded-2xl p-4 sm:p-6 text-center relative overflow-hidden group"
+                    >
+                        <div
+                            class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-400 via-orange-300 to-orange-400"
+                        ></div>
+                        <div
+                            class="text-3xl sm:text-4xl mb-2 sm:mb-3 group-hover:scale-110 transition-transform"
+                        >
+                            🥉
+                        </div>
+                        <h3
+                            class="text-base sm:text-lg font-bold text-orange-400 mb-1"
+                        >
+                            三等奖（所有奖项）
+                        </h3>
+                        <p
+                            class="text-white font-medium mb-1 text-xs sm:text-sm"
+                        >
+                            小米充电宝
+                        </p>
+                        <p
+                            class="text-xl sm:text-2xl font-bold text-white mb-2"
+                        >
+                            ¥148
+                        </p>
+                        <div class="text-xs text-gray-400">每个奖项各1名</div>
+                    </div>
+                </div>
+
+                <!-- Budget Table -->
+                <div
+                    class="bg-white/5 rounded-xl sm:rounded-2xl overflow-hidden border border-white/10"
+                >
+                    <div
+                        class="px-3 sm:px-6 py-2 sm:py-3 border-b border-white/10 bg-white/5"
+                    >
+                        <h3 class="text-sm sm:text-base font-bold text-white">
+                            奖品预算明细
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-xs sm:text-sm">
+                            <thead
+                                class="bg-white/5 text-gray-400 text-xs uppercase"
+                            >
+                                <tr>
+                                    <th class="px-3 sm:px-6 py-2 sm:py-3">
+                                        奖品名称
+                                    </th>
+                                    <th
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        数量
+                                    </th>
+                                    <th
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        单价
+                                    </th>
+                                    <th
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        总价
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody
+                                class="divide-y divide-white/10 text-gray-300"
+                            >
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        华为蓝牙耳机
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        1个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥460
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥460
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        小米手表
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        1个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥460
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥460
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        尤尼克斯羽毛球拍
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        1个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥450
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥450
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        外交官拉杆箱
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        3个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥450
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥1,350
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        富士胶卷相机
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        3个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥450
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥1,350
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        雷蛇V3键盘
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        1个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥450
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥450
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        海尔腰部按摩仪
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        10个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥199
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥1,990
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        小米充电宝
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        10个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥148
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥1,480
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-white/5 transition-colors">
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 font-medium"
+                                    >
+                                        富光运动水杯
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-center"
+                                    >
+                                        100个
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right"
+                                    >
+                                        ¥25
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-cyan-400"
+                                    >
+                                        ¥2,500
+                                    </td>
+                                </tr>
+                                <tr
+                                    class="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 font-bold"
+                                >
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-white"
+                                        colspan="3"
+                                    >
+                                        合计
+                                    </td>
+                                    <td
+                                        class="px-3 sm:px-6 py-2 sm:py-3 text-right text-xs sm:text-base text-white"
+                                    >
+                                        ¥10,490
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Rules Section -->
+        <section
+            id="rules"
+            class="py-16 sm:py-24 bg-gradient-to-b from-black to-gray-900"
+        >
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-12 sm:mb-16 reveal-up">
+                    <h2
+                        class="text-3xl sm:text-4xl md:text-5xl font-bold mb-3 sm:mb-4"
+                    >
+                        活动规则
+                    </h2>
+                    <p class="text-gray-400 text-sm sm:text-base">
+                        请仔细阅读并遵守以下规定
+                    </p>
+                </div>
+
+                <div class="space-y-4 sm:space-y-6">
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start hover:border-cyan-500/50 transition-colors"
+                    >
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold flex-shrink-0 text-sm sm:text-base"
+                        >
+                            1
+                        </div>
+                        <div>
+                            <h3
+                                class="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2"
+                            >
+                                保密纪律
+                            </h3>
+                            <p class="text-gray-400 text-sm sm:text-base">
+                                校内使用运动软件仅记录里程，勿记录轨迹；校外注意安全，尽量结伴而行。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start hover:border-cyan-500/50 transition-colors"
+                    >
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold flex-shrink-0 text-sm sm:text-base"
+                        >
+                            2
+                        </div>
+                        <div>
+                            <h3
+                                class="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2"
+                            >
+                                报名方式
+                            </h3>
+                            <p class="text-gray-400 text-sm sm:text-base">
+                                参赛者根据不同的奖项扫码进群，活动结束前均可报名。活动结束时由各奖项负责人在群里收集相应截图及数据、公示结果。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start hover:border-purple-500/50 transition-colors"
+                    >
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold flex-shrink-0 text-sm sm:text-base"
+                        >
+                            3
+                        </div>
+                        <div>
+                            <h3
+                                class="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2"
+                            >
+                                奖项限制
+                            </h3>
+                            <p class="text-gray-400 text-sm sm:text-base">
+                                每人只能选择一个赛道报名。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start hover:border-pink-500/50 transition-colors"
+                    >
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold flex-shrink-0 text-sm sm:text-base"
+                        >
+                            4
+                        </div>
+                        <div>
+                            <h3
+                                class="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2"
+                            >
+                                数据提交
+                            </h3>
+                            <p class="text-gray-400 text-sm sm:text-base">
+                                结果以当日里程截图为准，截图需含用户名、日期、距离、时长；弄虚作假取消资格。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start hover:border-yellow-500/50 transition-colors"
+                    >
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold flex-shrink-0 text-sm sm:text-base"
+                        >
+                            5
+                        </div>
+                        <div>
+                            <h3
+                                class="text-base sm:text-lg font-bold text-white mb-1 sm:mb-2"
+                            >
+                                安全要求
+                            </h3>
+                            <p class="text-gray-400 text-sm sm:text-base">
+                                量力而行，科学运动，身体不适立即停止，必要时就医，坚持"安全第一、健康至上"。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div
+                        class="bg-red-500/10 border border-red-500/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start"
+                    >
+                        <div
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-red-500/20 text-red-400 flex items-center justify-center font-bold flex-shrink-0 text-sm sm:text-base"
+                        >
+                            !
+                        </div>
+                        <div>
+                            <h3
+                                class="text-base sm:text-lg font-bold text-red-400 mb-1 sm:mb-2"
+                            >
+                                严禁作弊
+                            </h3>
+                            <p class="text-gray-300 text-sm sm:text-base">
+                                若存在使用他人截图、重复使用同一截图、P图等弄虚作假行为的，一经发现，<span
+                                    class="text-red-400 font-bold"
+                                    >取消资格</span
+                                >。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="mt-8 sm:mt-12 p-6 sm:p-8 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-2xl sm:rounded-3xl border border-white/10 text-center"
+                >
+                    <h3 class="text-xl sm:text-2xl font-bold mb-3 sm:mb-4">
+                        准备好开始了吗？
+                    </h3>
+                    <p
+                        class="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base px-2"
+                    >
+                        加入微信群，选择你的奖项，开启挑战之旅
+                    </p>
+                    <button
+                        onclick="openQRModal()"
+                        class="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full font-bold text-base sm:text-lg hover:shadow-lg hover:shadow-cyan-500/30 transition-all transform hover:scale-105"
+                    >
+                        立即报名参赛
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-black border-t border-white/10 py-8 sm:py-12">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center gap-4 sm:gap-6"
+                >
+                    <div class="flex items-center gap-2 sm:gap-3">
+                        <img
+                            src="/sport/logo.png"
+                            alt="Logo"
+                            class="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover"
+                        />
+                        <div>
+                            <div class="font-bold text-base sm:text-lg">
+                                电子科学学院学员二大队
+                            </div>
+                            <div class="text-xs sm:text-sm text-gray-500">
+                                E路向前 云动2026
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="text-center md:text-right text-gray-500 text-xs sm:text-sm"
+                    >
+                        <p>活动时间：2026年4月1日 - 4月30日</p>
+                        <p class="mt-1">© 2026 All Rights Reserved</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- QR Code Modal -->
+        <div
+            id="qrModal"
+            class="fixed inset-0 z-[100] hidden overflow-y-auto scroll-smooth-ios"
+        >
+            <div
+                class="absolute inset-0 bg-black/95 backdrop-blur-md min-h-full"
+                onclick="closeQRModal()"
+            ></div>
+            <div
+                class="relative min-h-full flex items-center justify-center p-4"
+            >
+                <div
+                    class="modal-content bg-gray-900 border border-white/20 rounded-3xl p-4 sm:p-8 relative shadow-2xl shadow-cyan-500/20 w-full max-w-5xl my-8"
+                >
+                    <button
+                        onclick="closeQRModal()"
+                        class="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center transition-colors z-10 btn-press"
+                    >
+                        <svg
+                            class="w-5 h-5 sm:w-6 sm:h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            ></path>
+                        </svg>
+                    </button>
+
+                    <div class="text-center mb-6 sm:mb-8 pt-2">
+                        <h3
+                            class="text-2xl sm:text-3xl font-bold mb-2 gradient-text"
+                        >
+                            扫码立即报名
+                        </h3>
+                        <p class="text-gray-400 text-sm sm:text-base">
+                            选择以下任一奖项，微信扫码进群即报名成功
+                        </p>
+                        <p
+                            class="text-xs sm:text-sm text-cyan-400 mt-2 font-medium"
+                        >
+                            每人限报一个奖项，请谨慎选择
+                        </p>
+                    </div>
+
+                    <div
+                        class="qr-grid grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6"
+                        id="qrContainer"
+                    >
+                        <!-- QR Code 1: 最强挑战奖 -->
+                        <div
+                            class="track-card bg-white/5 border-2 border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center relative overflow-hidden group"
+                            data-track="excellence"
+                            onclick="selectTrack('excellence')"
+                        >
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-cyan-500"
+                            ></div>
+                            <div class="mb-2 sm:mb-4 relative">
+                                <div
+                                    class="w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-cyan-500/20 rounded-full flex items-center justify-center text-xl sm:text-2xl mb-2"
+                                >
+                                    🏃
+                                </div>
+                                <h4
+                                    class="text-sm sm:text-lg font-bold text-white mb-0.5 sm:mb-1"
+                                >
+                                    最强挑战奖
+                                </h4>
+                            </div>
+
+                            <div
+                                class="qr-wrapper bg-white p-2 sm:p-4 rounded-lg sm:rounded-xl mb-2 sm:mb-4 relative mx-auto max-w-[120px] sm:max-w-none"
+                            >
+                                <div
+                                    class="pulse-ring absolute inset-0 m-auto w-full h-full"
+                                ></div>
+                                <div
+                                    id="qrcode-excellence"
+                                    class="relative z-10 flex justify-center"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                >
+                                    <span class="text-black text-xs font-bold"
+                                        >点击选择</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code 2: 数字征程奖 -->
+                        <div
+                            class="track-card bg-white/5 border-2 border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center relative overflow-hidden group"
+                            data-track="journey"
+                            onclick="selectTrack('journey')"
+                        >
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-purple-500"
+                            ></div>
+                            <div class="mb-2 sm:mb-4 relative">
+                                <div
+                                    class="w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center text-xl sm:text-2xl mb-2"
+                                >
+                                    🛤️
+                                </div>
+                                <h4
+                                    class="text-sm sm:text-lg font-bold text-white mb-0.5 sm:mb-1"
+                                >
+                                    数字征程奖
+                                </h4>
+                            </div>
+
+                            <div
+                                class="qr-wrapper bg-white p-2 sm:p-4 rounded-lg sm:rounded-xl mb-2 sm:mb-4 relative mx-auto max-w-[120px] sm:max-w-none"
+                            >
+                                <div
+                                    class="pulse-ring absolute inset-0 m-auto w-full h-full"
+                                ></div>
+                                <div
+                                    id="qrcode-journey"
+                                    class="relative z-10 flex justify-center"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                >
+                                    <span class="text-black text-xs font-bold"
+                                        >点击选择</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code 3: 师生协作奖 -->
+                        <div
+                            class="track-card bg-white/5 border-2 border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center relative overflow-hidden group"
+                            data-track="teamwork"
+                            onclick="selectTrack('teamwork')"
+                        >
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-green-500"
+                            ></div>
+                            <div class="mb-2 sm:mb-4 relative">
+                                <div
+                                    class="w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-green-500/20 rounded-full flex items-center justify-center text-xl sm:text-2xl mb-2"
+                                >
+                                    👥
+                                </div>
+                                <h4
+                                    class="text-sm sm:text-lg font-bold text-white mb-0.5 sm:mb-1"
+                                >
+                                    师生协作奖
+                                </h4>
+                            </div>
+
+                            <div
+                                class="qr-wrapper bg-white p-2 sm:p-4 rounded-lg sm:rounded-xl mb-2 sm:mb-4 relative mx-auto max-w-[120px] sm:max-w-none"
+                            >
+                                <div
+                                    class="pulse-ring absolute inset-0 m-auto w-full h-full"
+                                ></div>
+                                <div
+                                    id="qrcode-teamwork"
+                                    class="relative z-10 flex justify-center"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                >
+                                    <span class="text-black text-xs font-bold"
+                                        >点击选择</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code 4: 全勤打卡奖 -->
+                        <div
+                            class="track-card bg-white/5 border-2 border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center relative overflow-hidden group"
+                            data-track="diligence"
+                            onclick="selectTrack('diligence')"
+                        >
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-pink-500"
+                            ></div>
+                            <div class="mb-2 sm:mb-4 relative">
+                                <div
+                                    class="w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-pink-500/20 rounded-full flex items-center justify-center text-xl sm:text-2xl mb-2"
+                                >
+                                    📅
+                                </div>
+                                <h4
+                                    class="text-sm sm:text-lg font-bold text-white mb-0.5 sm:mb-1"
+                                >
+                                    全勤打卡奖
+                                </h4>
+                            </div>
+
+                            <div
+                                class="qr-wrapper bg-white p-2 sm:p-4 rounded-lg sm:rounded-xl mb-2 sm:mb-4 relative mx-auto max-w-[120px] sm:max-w-none"
+                            >
+                                <div
+                                    class="pulse-ring absolute inset-0 m-auto w-full h-full"
+                                ></div>
+                                <div
+                                    id="qrcode-diligence"
+                                    class="relative z-10 flex justify-center"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                >
+                                    <span class="text-black text-xs font-bold"
+                                        >点击选择</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code 5: 最具创意奖 -->
+                        <div
+                            class="track-card bg-white/5 border-2 border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center relative overflow-hidden group"
+                            data-track="creative"
+                            onclick="selectTrack('creative')"
+                        >
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-yellow-500"
+                            ></div>
+                            <div class="mb-2 sm:mb-4 relative">
+                                <div
+                                    class="w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-yellow-500/20 rounded-full flex items-center justify-center text-xl sm:text-2xl mb-2"
+                                >
+                                    🎨
+                                </div>
+                                <h4
+                                    class="text-sm sm:text-lg font-bold text-white mb-0.5 sm:mb-1"
+                                >
+                                    最具创意奖
+                                </h4>
+                            </div>
+
+                            <div
+                                class="qr-wrapper bg-white p-2 sm:p-4 rounded-lg sm:rounded-xl mb-2 sm:mb-4 relative mx-auto max-w-[120px] sm:max-w-none"
+                            >
+                                <div
+                                    class="pulse-ring absolute inset-0 m-auto w-full h-full"
+                                ></div>
+                                <div
+                                    id="qrcode-creative"
+                                    class="relative z-10 flex justify-center"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                >
+                                    <span class="text-black text-xs font-bold"
+                                        >点击选择</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- QR Code 6: 最佳叙事奖 -->
+                        <div
+                            class="track-card bg-white/5 border-2 border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-6 text-center relative overflow-hidden group"
+                            data-track="story"
+                            onclick="selectTrack('story')"
+                        >
+                            <div
+                                class="absolute top-0 left-0 w-full h-1 bg-orange-500"
+                            ></div>
+                            <div class="mb-2 sm:mb-4 relative">
+                                <div
+                                    class="w-10 h-10 sm:w-12 sm:h-12 mx-auto bg-orange-500/20 rounded-full flex items-center justify-center text-xl sm:text-2xl mb-2"
+                                >
+                                    ❤️
+                                </div>
+                                <h4
+                                    class="text-sm sm:text-lg font-bold text-white mb-0.5 sm:mb-1"
+                                >
+                                    最佳叙事奖
+                                </h4>
+                            </div>
+
+                            <div
+                                class="qr-wrapper bg-white p-2 sm:p-4 rounded-lg sm:rounded-xl mb-2 sm:mb-4 relative mx-auto max-w-[120px] sm:max-w-none"
+                            >
+                                <div
+                                    class="pulse-ring absolute inset-0 m-auto w-full h-full"
+                                ></div>
+                                <div
+                                    id="qrcode-story"
+                                    class="relative z-10 flex justify-center"
+                                ></div>
+                                <div
+                                    class="absolute inset-0 flex items-center justify-center bg-white/90 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                >
+                                    <span class="text-black text-xs font-bold"
+                                        >点击选择</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-4 sm:mt-8 p-3 sm:p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl text-center"
+                    >
+                        <p class="text-cyan-400 text-xs sm:text-sm">
+                            <span class="font-bold">提示：</span
+                            >微信扫描二维码进群即视为报名成功，进群后请修改群昵称为"姓名+单位"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            // QR Code Data - will be fetched from remote URL
+            // let qrData = {};
+
+            let qrData = {
+                excellence: "https://weixin.qq.com/g/AwYAALIBdpwhn0JqXmU6u-o8jD1_nYEFLXGFWoiqE7tKivcE1pfUiLtKE6U1_PCP",
+                journey: "https://weixin.qq.com/g/AwYAALu86F8gLjC8-SluECxVMzMm4_GFHorV-aibbfYdfIQP5oqkEIQ84jfn7vm6",
+                teamwork: "https://weixin.qq.com/g/AwYAADrb9C__QE4c_0k6YHG9Uu0ftPa7zL6Vr5r_FdI5bMyfIP1ld8yMewbWnApI",
+                diligence: "https://weixin.qq.com/g/AwYAAGyrxgdXE96kCthAkeSpLoZ1l1aGnTzPpaJ2JfJ7-n1gCnTSTF9zsKAXyAmu",
+                creative: "https://weixin.qq.com/g/AwYAABwX11iFQ1choHWgjhlnnAuoSNp6Vxz_R31jsxx4pVPf1G6Pq0MMi5CHZHBZ",
+                story: "https://weixin.qq.com/g/AwYAALYA_GoOmfEXMG4RMRWodr1V9VYJOD8181WgyAcXEK__9J59iMFU9gshCaZT"
+            }
+
+            // Fetch QR Code Data from remote URL
+            async function fetchQRData() {
+                try {
+                    const response = await fetch(
+                        "https://stastic.s3.bitiful.net/data/group.json",
+                    );
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error! status: ${response.status}`,
+                        );
+                    }
+                    const data = await response.json();
+                    qrData = data;
+                    console.log("QR Code data loaded successfully:", qrData);
+                } catch (error) {
+                    console.error("Failed to fetch QR Code data:", error);
+                    // Fallback to default data if fetch fails
+                    qrData = {
+                        excellence:
+                            "https://weixin.qq.com/g/AwYAAIFJYFjGJirhilHA5FOrOiyWdkcNNE-2BsoqpA3x6oQH-8LkoxC-OQgTsvcG",
+                        journey:
+                            "https://weixin.qq.com/g/AwYAAIFJYFjGJirhilHA5FOrOiyWdkcNNE-2BsoqpA3x6oQH-8LkoxC-OQgTsvcG",
+                        teamwork:
+                            "https://weixin.qq.com/g/AwYAAIFJYFjGJirhilHA5FOrOiyWdkcNNE-2BsoqpA3x6oQH-8LkoxC-OQgTsvcG",
+                        diligence:
+                            "https://weixin.qq.com/g/AwYAAIFJYFjGJirhilHA5FOrOiyWdkcNNE-2BsoqpA3x6oQH-8LkoxC-OQgTsvcG",
+                        creative:
+                            "https://weixin.qq.com/g/AwYAAIFJYFjGJirhilHA5FOrOiyWdkcNNE-2BsoqpA3x6oQH-8LkoxC-OQgTsvcG",
+                        story: "https://weixin.qq.com/g/AwYAAIFJYFjGJirhilHA5FOrOiyWdkcNNE-2BsoqpA3x6oQH-8LkoxC-OQgTsvcG",
+                    };
+                }
+            }
+
+            // Track names mapping
+            const trackNames = {
+                excellence: "最强挑战奖",
+                journey: "数字征程奖",
+                teamwork: "师生协作奖",
+                diligence: "全勤打卡奖",
+                creative: "最具创意奖",
+                story: "最佳叙事奖",
+            };
+
+            // Mobile Menu Toggle
+            function toggleMobileMenu() {
+                const menu = document.getElementById("mobileMenu");
+                menu.classList.toggle("hidden");
+            }
+
+            // Generate QR Codes with responsive sizing
+            function generateQRCodes() {
+                const isMobile = window.innerWidth < 640;
+                const qrSize = isMobile ? 100 : 128;
+
+                Object.keys(qrData).forEach((track) => {
+                    const container = document.getElementById(
+                        `qrcode-${track}`,
+                    );
+                    if (container && qrData[track]) {
+                        container.innerHTML = "";
+                        // Create QR code as canvas first
+                        const qrcode = new QRCode(container, {
+                            text: qrData[track],
+                            width: qrSize,
+                            height: qrSize,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.H,
+                        });
+
+                        // Wait a short moment for canvas to render, then convert to image
+                        setTimeout(() => {
+                            const canvas = container.querySelector("canvas");
+                            if (canvas) {
+                                const dataURL = canvas.toDataURL("image/png");
+                                const img = document.createElement("img");
+                                img.src = dataURL;
+                                img.alt = `${track} QR Code`;
+                                img.width = qrSize;
+                                img.height = qrSize;
+                                img.className = "qr-image";
+                                // Replace canvas with img
+                                container.innerHTML = "";
+                                container.appendChild(img);
+                            }
+                        }, 50);
+                    }
+                });
+            }
+
+            // Countdown Timer
+            function updateCountdown() {
+                const startDate = new Date("2026-04-30T23:59:59");
+                const now = new Date();
+                const diff = startDate - now;
+
+                if (diff > 0) {
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor(
+                        (diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+                    );
+                    const minutes = Math.floor(
+                        (diff % (1000 * 60 * 60)) / (1000 * 60),
+                    );
+                    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                    document.getElementById("days").textContent = String(
+                        days,
+                    ).padStart(2, "0");
+                    document.getElementById("hours").textContent = String(
+                        hours,
+                    ).padStart(2, "0");
+                    document.getElementById("minutes").textContent = String(
+                        minutes,
+                    ).padStart(2, "0");
+                    document.getElementById("seconds").textContent = String(
+                        seconds,
+                    ).padStart(2, "0");
+                }
+            }
+
+            setInterval(updateCountdown, 1000);
+            updateCountdown();
+
+            // Modal Functions
+            function openQRModal(preselectTrack = null) {
+                const modal = document.getElementById("qrModal");
+                modal.classList.remove("hidden");
+                document.body.style.overflow = "hidden";
+
+                // Generate QR codes with appropriate size (only if data is loaded)
+                if (Object.keys(qrData).length > 0) {
+                    setTimeout(generateQRCodes, 100);
+                } else {
+                    // If data not loaded yet, wait for it
+                    const checkDataLoaded = setInterval(() => {
+                        if (Object.keys(qrData).length > 0) {
+                            clearInterval(checkDataLoaded);
+                            setTimeout(generateQRCodes, 100);
+                        }
+                    }, 100);
+                }
+
+                // Preselect track if specified
+                if (preselectTrack) {
+                    setTimeout(() => selectTrack(preselectTrack), 200);
+                }
+            }
+
+            function closeQRModal() {
+                document.getElementById("qrModal").classList.add("hidden");
+                document.body.style.overflow = "auto";
+                // Remove selection
+                document.querySelectorAll(".track-card").forEach((card) => {
+                    card.classList.remove("selected");
+                });
+            }
+
+            // Track Selection
+            function selectTrack(track) {
+                // Remove previous selection
+                document.querySelectorAll(".track-card").forEach((card) => {
+                    card.classList.remove("selected");
+                });
+
+                // Add selection to current
+                const selectedCard = document.querySelector(
+                    `[data-track="${track}"]`,
+                );
+                if (selectedCard) {
+                    selectedCard.classList.add("selected");
+
+                    // Scroll into view on mobile
+                    if (window.innerWidth < 768) {
+                        selectedCard.scrollIntoView({
+                            behavior: "smooth",
+                            block: "center",
+                            inline: "center",
+                        });
+                    }
+                }
+            }
+
+            // Download QR Code
+            function downloadQR(track, name) {
+                const canvas = document.querySelector(
+                    `#qrcode-${track} canvas`,
+                );
+                if (canvas) {
+                    // Create a temporary link
+                    const link = document.createElement("a");
+                    link.download = `云动2026-${name}-报名二维码.png`;
+                    link.href = canvas.toDataURL("image/png");
+
+                    // For mobile compatibility
+                    if (
+                        navigator.userAgent.match(/(iPhone|iPod|iPad|Android)/i)
+                    ) {
+                        // Open in new tab for mobile
+                        window.open(link.href, "_blank");
+                    } else {
+                        link.click();
+                    }
+                }
+            }
+
+            // Smooth Scroll
+            function scrollToSection(id) {
+                const element = document.getElementById(id);
+                const navHeight = document.querySelector("nav").offsetHeight;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition =
+                    elementPosition + window.pageYOffset - navHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth",
+                });
+            }
+
+            // Particle Animation - optimized for mobile
+            function createParticles() {
+                if (window.matchMedia("(pointer: coarse)").matches) {
+                    // Skip particles on touch devices for performance
+                    return;
+                }
+
+                const container = document.getElementById("particles");
+                const particleCount = 30; // Reduced for mobile
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement("div");
+                    particle.className = "particle";
+                    particle.style.left = Math.random() * 100 + "%";
+                    particle.style.top = Math.random() * 100 + "%";
+                    particle.style.animationDelay = Math.random() * 5 + "s";
+                    container.appendChild(particle);
+
+                    gsap.to(particle, {
+                        y: -100,
+                        opacity: 0,
+                        duration: Math.random() * 3 + 2,
+                        repeat: -1,
+                        delay: Math.random() * 5,
+                        ease: "none",
+                    });
+                }
+            }
+
+            // GSAP Animations - disable on mobile for performance
+            if (!window.matchMedia("(pointer: coarse)").matches) {
+                gsap.registerPlugin(ScrollTrigger);
+
+                // Reveal animations
+                gsap.utils.toArray(".reveal-up").forEach((element) => {
+                    gsap.from(element, {
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 85%",
+                            toggleActions: "play none none reverse",
+                        },
+                        y: 50,
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power3.out",
+                    });
+                });
+
+                gsap.utils.toArray(".reveal-left").forEach((element) => {
+                    gsap.from(element, {
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 85%",
+                            toggleActions: "play none none reverse",
+                        },
+                        x: -50,
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power3.out",
+                    });
+                });
+
+                gsap.utils.toArray(".reveal-right").forEach((element) => {
+                    gsap.from(element, {
+                        scrollTrigger: {
+                            trigger: element,
+                            start: "top 85%",
+                            toggleActions: "play none none reverse",
+                        },
+                        x: 50,
+                        opacity: 0,
+                        duration: 1,
+                        ease: "power3.out",
+                    });
+                });
+            }
+
+            // Initialize
+            createParticles();
+
+            // Fetch QR Code data on page load
+            //fetchQRData().then(() => {
+                // Generate QR codes after data is loaded
+              //  generateQRCodes();
+            // });
+            generateQRCodes();
+
+            // Handle resize
+            let resizeTimer;
+            window.addEventListener("resize", () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(() => {
+                    // Only generate QR codes if data is loaded
+                    if (Object.keys(qrData).length > 0) {
+                        generateQRCodes();
+                    }
+                }, 250);
+            });
+
+            // Glitch effect randomization - reduced on mobile
+            if (!window.matchMedia("(pointer: coarse)").matches) {
+                setInterval(() => {
+                    const glitch = document.querySelector(".glitch");
+                    if (glitch) {
+                        glitch.style.animation = "none";
+                        setTimeout(() => {
+                            glitch.style.animation = "";
+                        }, 10);
+                    }
+                }, 5000);
+            }
+
+            // Close modal on escape key
+            document.addEventListener("keydown", function (e) {
+                if (e.key === "Escape") {
+                    closeQRModal();
+                }
+            });
+
+            // Prevent double-tap zoom on iOS
+            let lastTouchEnd = 0;
+            document.addEventListener(
+                "touchend",
+                function (event) {
+                    const now = new Date().getTime();
+                    if (now - lastTouchEnd <= 300) {
+                        event.preventDefault();
+                    }
+                    lastTouchEnd = now;
+                },
+                false,
+            );
+
+            // Navbar scroll behavior - optimized for smooth performance
+            const navbar = document.getElementById("navbar");
+            let isNavbarVisible = false;
+            let ticking = false;
+
+            const updateNavbar = () => {
+                const currentScrollY = window.scrollY;
+                const shouldShow = currentScrollY > 80;
+
+                if (shouldShow !== isNavbarVisible) {
+                    if (shouldShow) {
+                        navbar.classList.remove("-translate-y-full");
+                    } else {
+                        navbar.classList.add("-translate-y-full");
+                    }
+                    isNavbarVisible = shouldShow;
+                }
+
+                ticking = false;
+            };
+
+            window.addEventListener(
+                "scroll",
+                () => {
+                    if (!ticking) {
+                        requestAnimationFrame(updateNavbar);
+                        ticking = true;
+                    }
+                },
+                { passive: true },
+            );
+        </script>
+    </body>
+</html>

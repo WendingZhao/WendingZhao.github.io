@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>班车是什么时候？</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #6b8cbc;
+            --accent: #ff7e5f;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --success: #28a745;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .query-section {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+        }
+        
+        .time-input {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .time-input input, .time-input select {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:hover {
+            background-color: var(--secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .result-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            transition: var(--transition);
+        }
+        
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .schedule-list {
+            list-style-type: none;
+        }
+        
+        .schedule-list li {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: space-between;
+            transition: var(--transition);
+        }
+        
+        .schedule-list li:hover {
+            background-color: #e9ecef;
+        }
+        
+        .schedule-list .next {
+            background-color: #e8f5e9;
+            border-left: 4px solid var(--success);
+        }
+        
+        .no-bus {
+            text-align: center;
+            color: var(--gray);
+            font-style: italic;
+            padding: 20px;
+        }
+        
+        .full-schedule {
+            margin-top: 50px;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            margin-right: 5px;
+            transition: var(--transition);
+        }
+        
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            background-color: white;
+            padding: 25px;
+            border-radius: 0 var(--border-radius) var(--border-radius) var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .day-schedule {
+            margin-bottom: 30px;
+        }
+        
+        .day-schedule h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        
+        .time-item {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        
+        .time-item:hover {
+            background-color: #e9ecef;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .time-input {
+                flex-direction: column;
+            }
+            
+            .time-input input, .time-input select {
+                min-width: 100%;
+            }
+            
+            .tabs {
+                flex-wrap: wrap;
+            }
+            
+            .tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <section class="query-section">
+            <div class="time-input">
+                <input type="date" id="query-date">
+                <input type="time" id="query-time">
+                <button id="query-btn">查询班车</button>
+            </div>
+            
+            <div class="results">
+                <div class="result-card">
+                    <h3>一号院 → 三号院</h3>
+                    <ul class="schedule-list" id="one2three-results">
+                        <!-- 结果将在这里显示 -->
+                    </ul>
+                </div>
+                
+                <div class="result-card">
+                    <h3>三号院 → 一号院</h3>
+                    <ul class="schedule-list" id="three2one-results">
+                        <!-- 结果将在这里显示 -->
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <section class="full-schedule">
+            <h2>完整时刻表</h2>
+            <div class="tabs">
+                <div class="tab active" data-tab="one2three">一号院 → 三号院</div>
+                <div class="tab" data-tab="three2one">三号院 → 一号院</div>
+            </div>
+            
+            <div class="tab-content active" id="one2three-content">
+                <!-- 内容将通过JavaScript生成 -->
+            </div>
+            
+            <div class="tab-content" id="three2one-content">
+                <!-- 内容将通过JavaScript生成 -->
+            </div>
+        </section>
+        
+
+    </div>
+
+    <script>
+        // 班车时刻表数据
+        const scheduleData = {
+            "three2one": {
+                "mon2thu": [
+                    "7:50", "9:45", "10:00", "12:00", "12:35", "13:45", "16:25", "17:05", 
+                    "17:30", "17:55", "18:25", "21:00", "21:30", "21:35", "21:55", "22:15"
+                ],
+                "friday": [
+                    "7:50", "9:45", "10:00", "12:00", "12:35", "13:45", "16:25", "17:05", 
+                    "17:30", "17:55", "18:25", "21:00", "21:35", "21:55", "22:15"
+                ],
+                "saturday": [
+                    "7:50", "10:00", "12:00", "12:35", "16:25", "17:30", "18:25", "21:35", "22:15"
+                ],
+                "sunday": [
+                    "12:35", "17:30", "22:15"
+                ]
+            },
+            "one2three": {
+                "mon2fri": [
+                    "7:10", "7:20", "7:30", "9:20", "9:30", "11:25", "13:50", "14:00", 
+                    "15:30", "16:25", "18:55", "21:00"
+                ],
+                "saturday": [
+                    "7:20", "9:30", "11:25", "13:50", "15:30", "18:55"
+                ],
+                "sunday": [
+                    "7:20", "9:30", "13:50"
+                ]
+            }
+        };
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置默认日期时间为当前时间
+            const now = new Date();
+            document.getElementById('query-date').valueAsDate = now;
+            document.getElementById('query-time').value = 
+                `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // 绑定查询按钮事件
+            document.getElementById('query-btn').addEventListener('click', querySchedule);
+            
+            // 绑定标签页切换事件
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 移除所有活动标签
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    // 激活当前标签
+                    this.classList.add('active');
+                    document.getElementById(`${this.dataset.tab}-content`).classList.add('active');
+                });
+            });
+            
+            // 初始化完整时刻表
+            renderFullSchedule();
+            
+            // 执行初始查询
+            querySchedule();
+        });
+
+        // 查询班车时刻
+        function querySchedule() {
+            const dateInput = document.getElementById('query-date').value;
+            const timeInput = document.getElementById('query-time').value;
+            
+            if (!dateInput || !timeInput) {
+                alert('请选择日期和时间');
+                return;
+            }
+            
+            const queryDateTime = new Date(`${dateInput}T${timeInput}`);
+            const dayOfWeek = queryDateTime.getDay(); // 0=周日, 1=周一, ..., 6=周六
+            
+            // 获取对应日期的班车时刻
+            let one2threeSchedule = getScheduleForDay('one2three', dayOfWeek);
+            let three2oneSchedule = getScheduleForDay('three2one', dayOfWeek);
+            
+            // 过滤出未来的班车时刻
+            const one2threeFuture = filterFutureTimes(one2threeSchedule, queryDateTime);
+            const three2oneFuture = filterFutureTimes(three2oneSchedule, queryDateTime);
+            
+            // 显示结果
+            displayResults('one2three-results', one2threeFuture, queryDateTime);
+            displayResults('three2one-results', three2oneFuture, queryDateTime);
+        }
+
+        // 根据星期几获取对应的班车时刻
+        function getScheduleForDay(direction, dayOfWeek) {
+            const schedule = scheduleData[direction];
+            
+            if (direction === 'one2three') {
+                if (dayOfWeek === 0) return schedule.sunday; // 周日
+                if (dayOfWeek === 6) return schedule.saturday; // 周六
+                return schedule.mon2fri; // 周一至周五
+            } else { // three2one
+                if (dayOfWeek === 0) return schedule.sunday; // 周日
+                if (dayOfWeek === 6) return schedule.saturday; // 周六
+                if (dayOfWeek === 5) return schedule.friday; // 周五
+                return schedule.mon2thu; // 周一至周四
+            }
+        }
+
+        // 过滤出未来的时间
+        function filterFutureTimes(schedule, queryDateTime) {
+            return schedule.filter(timeStr => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                const timeDate = new Date(queryDateTime);
+                timeDate.setHours(hours, minutes, 0, 0);
+                
+                
+                return timeDate >= queryDateTime;
+            }).sort((a, b) => {
+                // 按时间排序
+                const [aHours, aMinutes] = a.split(':').map(Number);
+                const [bHours, bMinutes] = b.split(':').map(Number);
+                
+                if (aHours !== bHours) return aHours - bHours;
+                return aMinutes - bMinutes;
+            });
+        }
+
+        // 显示查询结果
+        function displayResults(elementId, schedule, queryDateTime) {
+            const element = document.getElementById(elementId);
+            
+            if (schedule.length === 0) {
+                element.innerHTML = '<li class="no-bus">今日已无班车</li>';
+                return;
+            }
+            
+            element.innerHTML = '';
+            
+            schedule.forEach((timeStr, index) => {
+                const [hours, minutes] = timeStr.split(':').map(Number);
+                const timeDate = new Date(queryDateTime);
+                timeDate.setHours(hours, minutes, 0, 0);
+                
+                // 如果时间在今天之前，则假设是明天的班车
+                if (timeDate < queryDateTime) {
+                    timeDate.setDate(timeDate.getDate() + 1);
+                }
+                
+                const li = document.createElement('li');
+                if (index === 0) {
+                    li.classList.add('next');
+                }
+                
+                const timeSpan = document.createElement('span');
+                timeSpan.textContent = timeStr;
+                
+                const relativeSpan = document.createElement('span');
+                relativeSpan.textContent = getRelativeTime(timeDate, queryDateTime);
+                
+                li.appendChild(timeSpan);
+                li.appendChild(relativeSpan);
+                element.appendChild(li);
+            });
+        }
+
+        // 获取相对时间描述
+        function getRelativeTime(timeDate, queryDateTime) {
+            const diffMs = timeDate - queryDateTime;
+            const diffMins = Math.round(diffMs / (1000 * 60));
+            
+            if (diffMins < 60) {
+                return `${diffMins}分钟后`;
+            } else {
+                const hours = Math.floor(diffMins / 60);
+                const mins = diffMins % 60;
+                return `${hours}小时${mins}分钟后`;
+            }
+        }
+
+        // 渲染完整时刻表
+        function renderFullSchedule() {
+            // 渲染一号院到三号院时刻表
+            const one2threeContent = document.getElementById('one2three-content');
+            one2threeContent.innerHTML = '';
+            
+            Object.entries(scheduleData.one2three).forEach(([day, times]) => {
+                const daySchedule = document.createElement('div');
+                daySchedule.className = 'day-schedule';
+                
+                const dayTitle = document.createElement('h4');
+                dayTitle.textContent = getDayName(day);
+                daySchedule.appendChild(dayTitle);
+                
+                const timeGrid = document.createElement('div');
+                timeGrid.className = 'time-grid';
+                
+                times.forEach(time => {
+                    const timeItem = document.createElement('div');
+                    timeItem.className = 'time-item';
+                    timeItem.textContent = time;
+                    timeGrid.appendChild(timeItem);
+                });
+                
+                daySchedule.appendChild(timeGrid);
+                one2threeContent.appendChild(daySchedule);
+            });
+            
+            // 渲染三号院到一号院时刻表
+            const three2oneContent = document.getElementById('three2one-content');
+            three2oneContent.innerHTML = '';
+            
+            Object.entries(scheduleData.three2one).forEach(([day, times]) => {
+                const daySchedule = document.createElement('div');
+                daySchedule.className = 'day-schedule';
+                
+                const dayTitle = document.createElement('h4');
+                dayTitle.textContent = getDayName(day);
+                daySchedule.appendChild(dayTitle);
+                
+                const timeGrid = document.createElement('div');
+                timeGrid.className = 'time-grid';
+                
+                times.forEach(time => {
+                    const timeItem = document.createElement('div');
+                    timeItem.className = 'time-item';
+                    timeItem.textContent = time;
+                    timeGrid.appendChild(timeItem);
+                });
+                
+                daySchedule.appendChild(timeGrid);
+                three2oneContent.appendChild(daySchedule);
+            });
+        }
+
+        // 获取日期名称
+        function getDayName(dayKey) {
+            const dayNames = {
+                'mon2fri': '周一至周五',
+                'mon2thu': '周一至周四',
+                'friday': '周五',
+                'saturday': '周六',
+                'sunday': '周日'
+            };
+            
+            return dayNames[dayKey] || dayKey;
+        }
+    </script>
+</body>
+</html>

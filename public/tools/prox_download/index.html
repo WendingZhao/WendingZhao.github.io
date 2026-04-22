@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+    <title>文件下载</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-color);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            color: #666;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .download-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .download-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .download-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .status.success {
+            background-color: rgba(46, 204, 113, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            display: block;
+        }
+        
+        .status.error {
+            background-color: rgba(231, 76, 60, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+            display: block;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .info-box {
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>文件下载</h1>
+            <p class="description">通过Cloudflare Worker下载文件，可切换不同下载源</p>
+        </header>
+        
+        <main>
+            <div class="form-group">
+                <label for="source-select">选择下载源</label>
+                <select id="source-select">
+                    <option value="">加载中...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="file-path">文件链接</label>
+                <input type="text" id="file-path" placeholder="例如: https://www.google.com/favicon.ico">
+            </div>
+            
+            <button id="download-btn" class="download-btn" disabled>下载文件</button>
+            
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在下载文件...</p>
+            </div>
+            
+            <div id="status" class="status"></div>
+            
+            <div class="info-box">
+                <p><strong>使用说明：</strong></p>
+                <p>1. 选择下载源</p>
+                <p>2. 输入文件🔗</p>
+                <p>3. 点击下载按钮，文件将通过Cloudflare Worker下载</p>
+            </div>
+        </main>
+        
+        <footer>
+            <p>基于Cloudflare Worker的服务</p>
+        </footer>
+    </div>
+
+    <script>
+        // 全局变量
+        let sources = {};
+        
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const sourceSelect = document.getElementById('source-select');
+            const fileLinkInput = document.getElementById('file-path');
+            const downloadBtn = document.getElementById('download-btn');
+            const loadingDiv = document.querySelector('.loading');
+            const statusDiv = document.getElementById('status');
+            
+            // 加载下载源
+            loadSources();
+            
+            // 监听下载按钮点击事件
+            downloadBtn.addEventListener('click', handleDownload);
+            
+            // 监听文件路径输入变化
+            fileLinkInput.addEventListener('input', updateDownloadButtonState);
+            
+            // 加载下载源
+            async function loadSources() {
+                try {
+                    const response = await fetch('./sources.json');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    sources = await response.json();
+                    
+                    // 清空选择框
+                    sourceSelect.innerHTML = '';
+                    
+                    // 添加下载源选项
+                    for (const [key, value] of Object.entries(sources)) {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        option.textContent = `${key} (${value})`;
+                        sourceSelect.appendChild(option);
+                    }
+                    
+                    // 默认选择第一个选项
+                    if (Object.keys(sources).length > 0) {    
+                        sourceSelect.value = sources[Object.keys(sources)[0]];
+                    }
+                    
+                    // 更新下载按钮状态
+                    updateDownloadButtonState();
+                    
+                } catch (error) {
+                    console.error('加载下载源失败:', error);
+                    sourceSelect.innerHTML = '<option value="">加载失败，请刷新页面</option>';
+                    showStatus('加载下载源失败，请检查sources.json文件是否存在', 'error');
+                }
+            }
+            
+            // 更新下载按钮状态
+            function updateDownloadButtonState() {
+                const sourceSelected = sourceSelect.value !== '';
+                const fileLinkEntered = fileLinkInput.value.trim() !== '';
+                downloadBtn.disabled = !(sourceSelected && fileLinkEntered);
+            }
+            
+            // 处理下载
+            async function handleDownload() {
+                const sourceKey = sourceSelect.value;
+                const fileLink = fileLinkInput.value.trim();
+                const cleanFileLink = fileLink.replace(/^https?:\/\//i, '');
+                
+                if (!sourceKey || !fileLink) {
+                    showStatus('请选择下载源并输入文件路径', 'error');
+                    return;
+                }
+                
+                // 显示加载状态
+                loadingDiv.style.display = 'block';
+                downloadBtn.disabled = true;
+                statusDiv.className = 'status';
+                
+                try {
+                    // 构建代理URL
+                    const sourceHostname = sourceKey;
+                    const proxyUrl = `${sourceHostname}/~${cleanFileLink}`;
+
+                    console.log(proxyUrl);
+                    
+                    const newWindow = window.open(proxyUrl, '_blank');
+                    
+                    // 可选：检查是否被拦截
+                    if (!newWindow) {
+                        showStatus('弹出窗口被浏览器阻止，请允许弹窗后重试', 'error');
+                    } else {
+                        showStatus('正在新标签页中打开文件...', 'success');
+                    }
+                    
+                } catch (error) {
+                    console.error('下载失败:', error);
+                    showStatus(`下载失败: ${error.message}`, 'error');
+                } finally {
+                    // 隐藏加载状态
+                    loadingDiv.style.display = 'none';
+                    downloadBtn.disabled = false;
+                }
+            }
+            
+            // 显示状态消息
+            function showStatus(message, type) {
+                statusDiv.textContent = message;
+                statusDiv.className = `status ${type}`;
+            }
+            
+            // 监听选择框变化
+            sourceSelect.addEventListener('change', updateDownloadButtonState);
+        });
+    </script>
+</body>
+</html>

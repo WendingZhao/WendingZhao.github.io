@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧树试题导出工具</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            line-height: 1.5;
+            color: #333;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .upload-area {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px dashed #ccc;
+        }
+        .upload-area:hover {
+            border-color: #999;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .btn-export {
+            background-color: #2196F3;
+        }
+        .btn-export:hover {
+            background-color: #0b7dda;
+        }
+        .question-container {
+            background-color: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            page-break-inside: avoid;
+        }
+        .question-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .question-type {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+        .options {
+            margin-left: 15px;
+        }
+        .option {
+            margin-bottom: 5px;
+            position: relative;
+            padding-left: 20px;
+        }
+        .option.correct {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .option-number {
+            position: absolute;
+            left: 0;
+        }
+        .user-answer {
+            color: #2196F3;
+            margin-top: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .result {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .correct-answer {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .wrong-answer {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .controls {
+            text-align: center;
+            margin: 15px 0;
+        }
+        .hidden {
+            display: none;
+        }
+        .exam-title {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .exam-desc {
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+        }
+        @media print {
+            .no-print {
+                display: none;
+            }
+            body {
+                background-color: white;
+                padding: 0;
+                font-size: 12px;
+            }
+            .question-container {
+                box-shadow: none;
+                border: 1px solid #eee;
+                margin-bottom: 15px;
+                padding: 8px;
+            }
+            .question-title {
+                font-size: 14px;
+                margin-bottom: 5px;
+            }
+            .options {
+                margin-left: 10px;
+            }
+            .option {
+                margin-bottom: 3px;
+                padding-left: 15px;
+            }
+            .result {
+                margin-top: 5px;
+                padding: 5px;
+                font-size: 12px;
+            }
+            .exam-title, .exam-desc {
+                margin-bottom: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header no-print">
+        <h1>智慧树试题导出工具</h1>
+        <p>上传JSON文件以渲染试题内容</p>
+    </div>
+
+    <div class="upload-area no-print">
+        <input type="file" id="jsonFile" accept=".json" style="display: none;">
+        <button class="btn" onclick="document.getElementById('jsonFile').click()">选择JSON文件</button>
+        <p>或将文件拖放到此处</p>
+        <div class="controls">
+            <button id="exportBtn" class="btn btn-export" disabled>导出为PDF</button>
+        </div>
+    </div>
+
+    <div id="examTitle" class="exam-title"></div>
+    <div id="examDesc" class="exam-desc"></div>
+    <div id="questionsContainer"></div>
+
+    <script>
+        // 全局变量存储试题数据和文件名
+        let questionsData = [];
+        let currentFileName = '';
+        
+        // 文件上传处理
+        document.getElementById('jsonFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            currentFileName = file.name.replace('.json', '');
+            document.title = currentFileName || '试题文档';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    questionsData = JSON.parse(e.target.result);
+                    renderQuestions(questionsData);
+                    document.getElementById('exportBtn').disabled = false;
+                } catch (error) {
+                    alert('解析JSON文件出错: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        });
+        
+        // 拖放功能
+        const uploadArea = document.querySelector('.upload-area');
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#2196F3';
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#ccc';
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ccc';
+            
+            const file = e.dataTransfer.files[0];
+            if (!file.name.endsWith('.json')) {
+                alert('请上传JSON文件');
+                return;
+            }
+            
+            currentFileName = file.name.replace('.json', '');
+            document.title = currentFileName || '试题文档';
+            
+            document.getElementById('jsonFile').files = e.dataTransfer.files;
+            const event = new Event('change');
+            document.getElementById('jsonFile').dispatchEvent(event);
+        });
+        
+        // 渲染试题
+        function renderQuestions(data) {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+            
+            if (!Array.isArray(data)) {
+                container.innerHTML = '<p>试题数据格式不正确</p>';
+                return;
+            }
+            
+            // 如果有考试标题和描述
+            if (data[0]?.examTitle) {
+                document.getElementById('examTitle').innerHTML = `<h2>${data[0].examTitle}</h2>`;
+            }
+            if (data[0]?.examDesc) {
+                document.getElementById('examDesc').innerHTML = `<p>${data[0].examDesc}</p>`;
+            }
+            
+            data.forEach((question, index) => {
+                if (!question.content) return;
+                
+                const questionDiv = document.createElement('div');
+                questionDiv.className = 'question-container';
+                
+                // 题目类型和内容
+                const typeText = question.questionTypeName ? `${question.questionTypeName}` : '未知题型';
+                questionDiv.innerHTML = `
+                    <div class="question-type">${index + 1}. ${typeText}</div>
+                    <div class="question-title">${formatQuestionContent(question.content)}</div>
+                `;
+                
+                // 选项
+                if (question.optionVos && question.optionVos.length > 0) {
+                    const optionsDiv = document.createElement('div');
+                    optionsDiv.className = 'options';
+                    
+                    // 先对选项进行排序，确保按sort值从小到大排列
+                    const sortedOptions = [...question.optionVos].sort((a, b) => a.sort - b.sort);
+                    
+                    sortedOptions.forEach((option, idx) => {
+                        const optionDiv = document.createElement('div');
+                        optionDiv.className = `option ${option.isCorrect ? 'correct' : ''}`;
+                        optionDiv.innerHTML = `
+                            <span class="option-number">${String.fromCharCode(65 + idx)}.</span>
+                            ${option.content}
+                        `;
+                        optionsDiv.appendChild(optionDiv);
+                    });
+                    
+                    questionDiv.appendChild(optionsDiv);
+                }
+                
+                // 用户答案和结果
+                if (question.userAnswerVo && question.userAnswerVo.length > 0) {
+                    const userAnswer = question.userAnswerVo[0];
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = `result ${userAnswer.isCorrect ? 'correct-answer' : 'wrong-answer'}`;
+                    
+                    let answerText = '未作答';
+                    if (userAnswer.answer !== null) {
+                        if (question.questionType === 1) {
+                            // 单选题
+                            const selectedOption = question.optionVos?.find(opt => opt.id == userAnswer.answer);
+                            if (selectedOption) {
+                                const optionIndex = question.optionVos.indexOf(selectedOption);
+                                answerText = `你的答案: ${getOptionLetter(selectedOption.sort)}.`;
+                            }
+                        } else if (question.questionType === 2) {
+                            // 多选题
+                            const answerIds = userAnswer.answer.split('#@#');
+                            const selectedOptions = question.optionVos?.filter(opt => answerIds.includes(opt.id.toString()));
+                            if (selectedOptions && selectedOptions.length > 0) {
+                                answerText = '你的答案: ' + selectedOptions.map(opt => {
+                                    const idx = question.optionVos.indexOf(opt);
+                                    return `${String.fromCharCode(65 + idx)}`;
+                                }).join('; ');
+                            }
+                        } else if (question.questionType === 14) {
+                            // 判断题
+                            const selectedOption = question.optionVos?.find(opt => opt.id == userAnswer.answer);
+                            if (selectedOption) {
+                                const optionIndex = question.optionVos.indexOf(selectedOption);
+                                answerText = `你的答案: ${getOptionLetter(selectedOption.sort)}. ${selectedOption.content}`;
+                            }
+                        }
+                    }
+                    
+                    resultDiv.innerHTML = `
+                        <div>${answerText}</div>
+                        <div>${userAnswer.isCorrect ? '回答正确' : '回答错误'}</div>
+                    `;
+                    questionDiv.appendChild(resultDiv);
+                }
+                
+                container.appendChild(questionDiv);
+            });
+        }
+        
+        // 格式化题目内容（去除多余的括号等）
+        function formatQuestionContent(content) {
+            // 去除多余的括号
+            let formatted = content.replace(/（\s*）\s*$/g, '');
+            // 处理HTML标签（如果有）
+            formatted = formatted.replace(/<[^>]+>/g, '');
+            return formatted;
+        }
+        
+        // 获取选项字母 (1 => A, 2 => B, ...)
+        function getOptionLetter(number) {
+            return String.fromCharCode(64 + parseInt(number));
+        }
+        
+        // 导出为PDF
+        document.getElementById('exportBtn').addEventListener('click', exportToPDF);
+        
+        function exportToPDF() {
+            // 保存原始标题
+            const originalTitle = document.title;
+            
+            // 如果当前有文件名，则使用文件名作为打印标题
+            if (currentFileName) {
+                document.title = currentFileName;
+            }
+            
+            // 打印前隐藏不需要的元素
+            const noPrintElements = document.querySelectorAll('.no-print');
+            noPrintElements.forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // 使用浏览器打印功能
+            window.print();
+            
+            // 恢复原始标题和显示元素
+            document.title = originalTitle;
+            noPrintElements.forEach(el => {
+                el.classList.remove('hidden');
+            });
+        }
+    </script>
+</body>
+</html>

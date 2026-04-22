@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>身份证号码生成器</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- 配置Tailwind自定义主题 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#165DFF',
+            secondary: '#36CFC9',
+            neutral: '#F5F7FA',
+            dark: '#1D2129',
+            light: '#F2F3F5'
+          },
+          fontFamily: {
+            inter: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .input-focus {
+        @apply focus:border-primary focus:ring-2 focus:ring-primary/20 focus:outline-none;
+      }
+      .transition-all-300 {
+        transition: all 300ms ease-in-out;
+      }
+    }
+  </style>
+</head>
+<body class="font-inter bg-gray-50 min-h-screen flex flex-col">
+  <!-- 顶部导航栏 -->
+  <header class="bg-white shadow-sm">
+    <div class="container mx-auto px-4 py-3">
+      <h1 class="text-xl font-bold text-dark flex items-center">
+        <i class="fa fa-id-card text-primary mr-2"></i>身份证号码生成器
+      </h1>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="flex-grow container mx-auto px-4 py-6">
+    <div class="max-w-4xl mx-auto">
+      <!-- 介绍卡片 -->
+      <div class="bg-white rounded-lg p-4 mb-6 shadow">
+        <h2 class="text-lg font-semibold mb-2 text-dark">身份证号码规则</h2>
+        <p class="text-gray-600 text-sm mb-3">中华人民共和国居民身份证号码共18位，由以下部分组成：</p>
+        <ul class="text-gray-600 text-sm space-y-1 ml-4 list-disc">
+          <li>前6位：地址码（省、市、县/区）</li>
+          <li>第7-14位：出生日期码（YYYYMMDD）</li>
+          <li>第15-17位：顺序码（奇数为男性，偶数为女性）</li>
+          <li>第18位：校验码（0-9或X）</li>
+        </ul>
+      </div>
+      
+      <div class="grid md:grid-cols-5 gap-6">
+        <!-- 左侧表单 -->
+        <div class="md:col-span-3">
+          <div class="bg-white rounded-lg p-4 shadow">
+            <h2 class="text-lg font-semibold mb-4 text-dark">生成设置</h2>
+            
+            <form id="idForm" class="space-y-4">
+              <!-- 地区选择 -->
+              <div class="space-y-2">
+                <label class="block text-gray-700 text-sm font-medium">地区</label>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <div class="relative">
+                      <select id="province" class="w-full px-3 py-2 text-sm border border-gray-300 rounded input-focus transition-all-300" disabled>
+                        <option value="">加载中...</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <select id="city" class="w-full px-3 py-2 text-sm border border-gray-300 rounded input-focus transition-all-300" disabled>
+                      <option value="">请先选择省份</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="locationError" class="text-red-500 text-xs hidden mt-1">
+                  <i class="fa fa-exclamation-circle mr-1"></i>
+                  <span>地区数据加载失败，请刷新页面重试</span>
+                </div>
+              </div>
+              
+              <!-- 出生日期 -->
+              <div class="space-y-2">
+                <label class="block text-gray-700 text-sm font-medium">出生日期</label>
+                <input type="date" id="birthdate" class="w-full px-3 py-2 text-sm border border-gray-300 rounded input-focus transition-all-300">
+              </div>
+              
+              <!-- 性别选择 -->
+              <div class="space-y-2">
+                <label class="block text-gray-700 text-sm font-medium">性别</label>
+                <div class="flex space-x-4">
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="gender" value="male" checked class="form-radio text-primary h-4 w-4">
+                    <span class="ml-2 text-gray-700 text-sm">男</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="gender" value="female" class="form-radio text-primary h-4 w-4">
+                    <span class="ml-2 text-gray-700 text-sm">女</span>
+                  </label>
+                  <label class="inline-flex items-center cursor-pointer">
+                    <input type="radio" name="gender" value="random" class="form-radio text-primary h-4 w-4">
+                    <span class="ml-2 text-gray-700 text-sm">随机</span>
+                  </label>
+                </div>
+              </div>
+              
+              <!-- 生成数量 -->
+              <div class="space-y-2">
+                <label class="block text-gray-700 text-sm font-medium">生成数量</label>
+                <div class="flex items-center">
+                  <button type="button" id="decreaseBtn" class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-l bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <i class="fa fa-minus text-gray-600 text-xs"></i>
+                  </button>
+                  <input type="number" id="count" min="1" max="10" value="1" class="w-12 h-8 text-center border-y border-gray-300 text-sm input-focus">
+                  <button type="button" id="increaseBtn" class="w-8 h-8 flex items-center justify-center border border-gray-300 rounded-r bg-gray-50 hover:bg-gray-100 transition-colors">
+                    <i class="fa fa-plus text-gray-600 text-xs"></i>
+                  </button>
+                  <span class="ml-2 text-gray-500 text-xs">最多10个</span>
+                </div>
+              </div>
+              
+              <!-- 生成按钮 -->
+              <button type="submit" class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2 px-4 rounded transition-all-300 text-sm">
+                生成身份证号码
+              </button>
+            </form>
+          </div>
+        </div>
+        
+        <!-- 右侧结果 -->
+        <div class="md:col-span-2">
+          <div class="bg-white rounded-lg p-4 shadow h-full flex flex-col">
+            <h2 class="text-lg font-semibold mb-4 text-dark">生成结果</h2>
+            
+            <div id="resultContainer" class="flex-grow overflow-auto mb-3 space-y-3">
+              <div class="text-gray-500 text-center py-6 border border-dashed border-gray-200 rounded">
+                <i class="fa fa-id-card-o text-3xl mb-2 text-gray-300"></i>
+                <p class="text-sm">请设置并生成身份证号码</p>
+              </div>
+            </div>
+            
+            <button id="copyAllBtn" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm py-2 px-4 rounded transition-all-300 opacity-50 cursor-not-allowed" disabled>
+              复制全部
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 解析工具 -->
+      <div class="mt-6 bg-white rounded-lg p-4 shadow">
+        <h2 class="text-lg font-semibold mb-4 text-dark">身份证号码解析</h2>
+        
+        <div class="flex flex-col md:flex-row gap-3">
+          <input type="text" id="parseIdInput" placeholder="请输入18位身份证号码进行解析" class="flex-grow px-3 py-2 text-sm border border-gray-300 rounded input-focus transition-all-300">
+          <button id="parseBtn" class="bg-secondary hover:bg-secondary/90 text-white text-sm py-2 px-4 rounded transition-all-300 whitespace-nowrap">
+            解析号码
+          </button>
+        </div>
+        
+        <div id="parseResult" class="mt-4 hidden">
+          <div class="p-3 bg-neutral rounded">
+            <h3 class="font-medium text-gray-800 text-sm mb-2">解析结果：</h3>
+            <table class="w-full text-gray-700 text-sm">
+              <tbody>
+                <tr class="border-b border-gray-200">
+                  <td class="py-1 w-1/3">地址：</td>
+                  <td id="parseAddress" class="py-1">--</td>
+                </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="py-1">出生日期：</td>
+                  <td id="parseBirthdate" class="py-1">--</td>
+                </tr>
+                <tr class="border-b border-gray-200">
+                  <td class="py-1">年龄：</td>
+                  <td id="parseAge" class="py-1">--</td>
+                </tr>
+                <tr>
+                  <td class="py-1">性别：</td>
+                  <td id="parseGender" class="py-1">--</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <div id="parseError" class="mt-4 hidden">
+          <div class="p-3 bg-red-50 border border-red-100 rounded text-red-600 text-sm">
+            <i class="fa fa-exclamation-circle mr-1"></i>
+            <span id="parseErrorMsg">请输入有效的18位身份证号码</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-dark text-gray-400 py-6 mt-8 text-xs">
+    <div class="container mx-auto px-4 text-center">
+      <p>© 2025 身份证号码生成器 | 本工具仅用于学习和测试，请勿用于非法用途</p>
+    </div>
+  </footer>
+
+  <!-- 复制成功提示 -->
+  <div id="copyToast" class="fixed bottom-4 right-4 bg-dark text-white px-3 py-1 rounded shadow transform translate-y-20 opacity-0 transition-all-300 flex items-center text-sm">
+    <i class="fa fa-check-circle mr-1 text-green-400"></i>
+    <span>复制成功</span>
+  </div>
+
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <script>
+    // 全局变量存储城市数据
+    let cityData = null;
+    
+    // DOM元素
+    const provinceSelect = document.getElementById('province');
+    const citySelect = document.getElementById('city');
+    const birthdateInput = document.getElementById('birthdate');
+    const genderRadios = document.querySelectorAll('input[name="gender"]');
+    const countInput = document.getElementById('count');
+    const decreaseBtn = document.getElementById('decreaseBtn');
+    const increaseBtn = document.getElementById('increaseBtn');
+    const idForm = document.getElementById('idForm');
+    const resultContainer = document.getElementById('resultContainer');
+    const copyAllBtn = document.getElementById('copyAllBtn');
+    const parseIdInput = document.getElementById('parseIdInput');
+    const parseBtn = document.getElementById('parseBtn');
+    const parseResult = document.getElementById('parseResult');
+    const parseError = document.getElementById('parseError');
+    const parseAddress = document.getElementById('parseAddress');
+    const parseBirthdate = document.getElementById('parseBirthdate');
+    const parseAge = document.getElementById('parseAge');
+    const parseGender = document.getElementById('parseGender');
+    const copyToast = document.getElementById('copyToast');
+    const locationError = document.getElementById('locationError');
+
+    // 从外部文件加载城市数据
+    async function loadCityData() {
+        try {
+            provinceSelect.disabled = true;
+            provinceSelect.innerHTML = '<option value="">加载中...</option>';
+            locationError.classList.add('hidden');
+            
+            // 从JSON文件获取数据
+            const response = await fetch('city_code.json');
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            cityData = await response.json();
+            
+            // 数据加载成功后初始化省份下拉框
+            initProvinces();
+            provinceSelect.disabled = false;
+        } catch (error) {
+            console.error('加载城市数据失败:', error);
+            provinceSelect.innerHTML = '<option value="">加载失败</option>';
+            locationError.classList.remove('hidden');
+        }
+    }
+
+    // 初始化省份下拉框
+    function initProvinces() {
+        if (!cityData) return;
+        
+        provinceSelect.innerHTML = '<option value="">请选择省份</option>';
+        
+        cityData.forEach(province => {
+            const option = document.createElement('option');
+            option.value = province.adcode;
+            option.textContent = province.name;
+            provinceSelect.appendChild(option);
+        });
+    }
+
+    // 根据选中的省份更新城市下拉框
+    function updateCities() {
+        if (!cityData) return;
+        
+        const provinceCode = provinceSelect.value;
+        citySelect.innerHTML = '';
+        
+        if (!provinceCode) {
+            const option = document.createElement('option');
+            option.value = '';
+            option.textContent = '请先选择省份';
+            citySelect.appendChild(option);
+            citySelect.disabled = true;
+            return;
+        }
+        
+        const province = cityData.find(p => p.adcode === provinceCode);
+        
+        if (province && province.districts && province.districts.length > 0) {
+            province.districts.forEach(city => {
+                const option = document.createElement('option');
+                option.value = city.adcode;
+                option.textContent = city.name;
+                citySelect.appendChild(option);
+            });
+            citySelect.disabled = false;
+        } else {
+            const option = document.createElement('option');
+            option.value = provinceCode + '00';
+            option.textContent = province.name + '（默认）';
+            citySelect.appendChild(option);
+            citySelect.disabled = false;
+        }
+    }
+
+    // 生成随机区县代码（01-99）
+    function generateRandomDistrictCode() {
+        const code = Math.floor(Math.random() * 99) + 1;
+        return code.toString().padStart(2, '0');
+    }
+
+    // 生成顺序码（3位数字，根据性别决定奇偶）
+    function generateOrderCode(gender) {
+        let code;
+        if (gender === 'male') {
+            code = Math.floor(Math.random() * 500) * 2 + 1;
+        } else if (gender === 'female') {
+            code = Math.floor(Math.random() * 500) * 2;
+        } else {
+            code = Math.floor(Math.random() * 1000);
+        }
+        return code.toString().padStart(3, '0');
+    }
+
+    // 计算校验码
+    function calculateCheckCode(id17) {
+        const factors = [7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
+        const parityBits = ['1', '0', 'X', '9', '8', '7', '6', '5', '4', '3', '2'];
+        
+        let sum = 0;
+        for (let i = 0; i < 17; i++) {
+            sum += parseInt(id17[i]) * factors[i];
+        }
+        
+        const remainder = sum % 11;
+        return parityBits[remainder];
+    }
+
+    // 生成身份证号码
+    function generateIdNumber(provinceCode, cityCode, birthdate, gender) {
+        let areaCode;
+        if (cityCode.length === 6) {
+            areaCode = cityCode;
+        } else {
+            areaCode = provinceCode.substring(0, 2) + 
+                      (cityCode || '00') + 
+                      generateRandomDistrictCode();
+        }
+        
+        const birthDateStr = birthdate.replace(/-/g, '');
+        const orderCode = generateOrderCode(gender);
+        const id17 = areaCode + birthDateStr + orderCode;
+        const checkCode = calculateCheckCode(id17);
+        
+        return id17 + checkCode;
+    }
+
+    // 显示生成的身份证号码
+    function displayResults(idNumbers) {
+        resultContainer.innerHTML = '';
+        
+        if (idNumbers.length === 0) {
+            resultContainer.innerHTML = `
+                <div class="text-gray-500 text-center py-6 border border-dashed border-gray-200 rounded">
+                    <i class="fa fa-exclamation-triangle text-3xl mb-2 text-gray-300"></i>
+                    <p class="text-sm">生成失败，请检查输入</p>
+                </div>
+            `;
+            copyAllBtn.disabled = true;
+            copyAllBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            return;
+        }
+        
+        idNumbers.forEach((id, index) => {
+            const idCard = document.createElement('div');
+            idCard.className = 'bg-neutral rounded p-3 relative';
+            
+            idCard.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs text-gray-500">身份证号码 #${index + 1}</span>
+                    <button class="copy-btn text-gray-400 hover:text-primary transition-colors p-1" data-id="${id}">
+                        <i class="fa fa-copy text-xs"></i>
+                    </button>
+                </div>
+                <div class="font-mono text-gray-800 text-sm break-all">${id}</div>
+            `;
+            
+            resultContainer.appendChild(idCard);
+        });
+        
+        // 绑定复制按钮事件
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                copyToClipboard(id);
+            });
+        });
+        
+        // 启用复制全部按钮
+        copyAllBtn.disabled = false;
+        copyAllBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
+    // 复制到剪贴板
+    function copyToClipboard(text) {
+        navigator.clipboard.writeText(text).then(() => {
+            showCopyToast();
+        }).catch(err => {
+            console.error('无法复制内容: ', err);
+        });
+    }
+
+    // 显示复制成功提示
+    function showCopyToast() {
+        copyToast.classList.remove('translate-y-20', 'opacity-0');
+        copyToast.classList.add('translate-y-0', 'opacity-100');
+        
+        setTimeout(() => {
+            copyToast.classList.remove('translate-y-0', 'opacity-100');
+            copyToast.classList.add('translate-y-20', 'opacity-0');
+        }, 2000);
+    }
+
+    // 解析身份证号码
+    function parseIdNumber(id) {
+        if (!cityData) {
+            showParseError('地区数据未加载，无法解析地址信息');
+            return false;
+        }
+        
+        if (!/^\d{17}[\dXx]$/.test(id)) {
+            showParseError('请输入有效的18位身份证号码');
+            return false;
+        }
+        
+        const areaCode = id.substring(0, 6);
+        const birthYear = id.substring(6, 10);
+        const birthMonth = id.substring(10, 12);
+        const birthDay = id.substring(12, 14);
+        const orderCode = id.substring(15, 17);
+        
+        const birthDate = new Date(`${birthYear}-${birthMonth}-${birthDay}`);
+        if (birthDate.toString() === 'Invalid Date') {
+            showParseError('身份证号码中的出生日期无效');
+            return false;
+        }
+        
+        const checkCode = id.substring(17).toUpperCase();
+        const calculatedCheckCode = calculateCheckCode(id.substring(0, 17));
+        if (checkCode !== calculatedCheckCode) {
+            showParseError('身份证号码校验码无效，可能是伪造的号码');
+            return false;
+        }
+        
+        let areaName = '未知地区';
+        let provinceCode = areaCode.substring(0, 2) + '0000';
+        let cityCode = areaCode.substring(0, 4) + '00';
+        
+        const province = cityData.find(p => p.adcode === provinceCode);
+        if (province) {
+            areaName = province.name;
+            
+            if (province.districts) {
+                const city = province.districts.find(c => c.adcode === cityCode || c.adcode === areaCode);
+                if (city) {
+                    areaName += ' ' + city.name;
+                }
+            }
+        }
+        
+        const today = new Date();
+        let age = today.getFullYear() - birthYear;
+        const monthDiff = today.getMonth() + 1 - birthMonth;
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDay)) {
+            age--;
+        }
+        
+        const gender = parseInt(orderCode) % 2 === 1 ? '男' : '女';
+        
+        parseAddress.textContent = areaName;
+        parseBirthdate.textContent = `${birthYear}年${birthMonth}月${birthDay}日`;
+        parseAge.textContent = `${age}岁`;
+        parseGender.textContent = gender;
+        
+        parseError.classList.add('hidden');
+        parseResult.classList.remove('hidden');
+        
+        return true;
+    }
+
+    // 显示解析错误
+    function showParseError(message) {
+        document.getElementById('parseErrorMsg').textContent = message;
+        parseResult.classList.add('hidden');
+        parseError.classList.remove('hidden');
+    }
+
+    // 事件监听
+    document.addEventListener('DOMContentLoaded', () => {
+        // 加载城市数据
+        loadCityData();
+        
+        // 设置默认出生日期（30年前）
+        const defaultBirthdate = new Date();
+        defaultBirthdate.setFullYear(defaultBirthdate.getFullYear() - 30);
+        birthdateInput.value = defaultBirthdate.toISOString().split('T')[0];
+        
+        // 省份选择变化时更新城市
+        provinceSelect.addEventListener('change', updateCities);
+        
+        // 数量增减按钮
+        decreaseBtn.addEventListener('click', () => {
+            let count = parseInt(countInput.value);
+            if (count > 1) {
+                countInput.value = count - 1;
+            }
+        });
+        
+        increaseBtn.addEventListener('click', () => {
+            let count = parseInt(countInput.value);
+            if (count < 10) {
+                countInput.value = count + 1;
+            }
+        });
+        
+        // 表单提交生成身份证号码
+        idForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            if (!cityData) {
+                alert('地区数据尚未加载完成，请稍候再试');
+                return;
+            }
+            
+            const provinceCode = provinceSelect.value;
+            const cityCode = citySelect.value;
+            const birthdate = birthdateInput.value;
+            
+            if (!provinceCode || !birthdate) {
+                alert('请选择省份和出生日期');
+                return;
+            }
+            
+            let gender = 'random';
+            genderRadios.forEach(radio => {
+                if (radio.checked) {
+                    gender = radio.value;
+                }
+            });
+            
+            const count = parseInt(countInput.value);
+            const idNumbers = [];
+            
+            for (let i = 0; i < count; i++) {
+                const currentGender = gender === 'random' 
+                    ? (Math.random() > 0.5 ? 'male' : 'female') 
+                    : gender;
+                
+                const id = generateIdNumber(provinceCode, cityCode, birthdate, currentGender);
+                idNumbers.push(id);
+            }
+            
+            displayResults(idNumbers);
+        });
+        
+        // 复制全部
+        copyAllBtn.addEventListener('click', () => {
+            const ids = Array.from(document.querySelectorAll('.copy-btn')).map(btn => btn.getAttribute('data-id'));
+            copyToClipboard(ids.join('\n'));
+        });
+        
+        // 解析身份证号码
+        parseBtn.addEventListener('click', () => {
+            const id = parseIdInput.value.trim();
+            if (id) {
+                parseIdNumber(id);
+            } else {
+                showParseError('请输入18位身份证号码');
+            }
+        });
+        
+        // 输入身份证号码后按回车解析
+        parseIdInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                parseBtn.click();
+            }
+        });
+    });
+</script>
+</body>
+</html>
