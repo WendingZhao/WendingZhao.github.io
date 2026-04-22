@@ -26,7 +26,7 @@ export const theme: ThemeUserConfig = {
   },
   /** Set a logo image to show in the homepage. */
   logo: {
-    src: '/src/assets/avatar.jpg',
+    src: '/src/assets/avatar.png',
     alt: 'Avatar'
   },
 
@@ -100,8 +100,8 @@ export const integ: IntegrationUserConfig = {
     applyTip: [
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
-      { name: 'Link', val: 'https://qiumo.fun/' },
-      { name: 'Avatar', val: 'https://qiumo.fun/favicon/favicon.ico' }
+      { name: 'Link', val: 'https://pengwee.wang' },
+      { name: 'Avatar', val: 'https://pengwee.wang/favicon/favicon.ico' }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false
