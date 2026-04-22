@@ -28,7 +28,7 @@ export default defineConfig({
   site: 'https://Snape-max.github.io',
   // Deploy to a sub path
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
-  // base: '/',
+  base: '/',
   trailingSlash: 'ignore',
   // root: './my-project-directory',
   server: { host: true },
