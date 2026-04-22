@@ -1,4 +1,4 @@
-# Astro Theme Pure
+# Astro Theme Pure 
 
 English | [简体中文](./README-zh-CN.md)
 
