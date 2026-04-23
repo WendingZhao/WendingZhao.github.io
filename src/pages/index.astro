@@ -7,8 +7,10 @@ import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
 import { Button, Card, Icon, Label } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import ProjectCard from '@/components/home/ProjectCard.astro'
+import EducationCard from '@/components/home/EducationCard.astro'
 import Section from '@/components/home/Section.astro'
 import config from '@/site-config'
+import nudtBadge from '@/assets/nudt.png'
 
 
 const MAX_POSTS = 10
@@ -68,6 +70,22 @@ if (!images[imagePath])
           </Section>
         )
       }
+      <Section title='Education'>
+        <div class='flex flex-col gap-y-3'>
+          <EducationCard
+            school='National University of Defense Technology'
+            program='Information and Communication Engineering'
+            period='August 2025 - Present'
+            badgeImage={nudtBadge.src}
+          />
+          <EducationCard
+            school='National University of Defense Technology'
+            program='Information Engineering'
+            period='August 2021 - July 2025'
+            badgeImage={nudtBadge.src}
+          />
+        </div>
+      </Section>
     </div>
     <Quote class='mt-12' />
   </main>

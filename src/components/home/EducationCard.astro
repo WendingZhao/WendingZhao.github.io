@@ -1,0 +1,159 @@
+---
+interface Props {
+  school: string
+  program: string
+  period: string
+  badgeText?: string
+  badgeImage?: string
+  badgeImageHalf?: 'top' | 'bottom' | 'full'
+  badgeTransform?: string
+  accent?: 'red' | 'blue' | 'teal' | 'gold'
+}
+
+const {
+  school,
+  program,
+  period,
+  badgeText = '',
+  badgeImage,
+  badgeImageHalf = 'full',
+  badgeTransform = 'translateY(-25%)',
+  accent = 'blue'
+} = Astro.props
+---
+
+<article class={`education-card accent-${accent}`}>
+  <div class='content'>
+    <h3 class='school'>{school}</h3>
+    <p class='program'>{program}</p>
+    <p class='period'>{period}</p>
+  </div>
+
+  {
+    badgeImage && (
+      <div
+        class={`badge-image-wrapper is-${badgeImageHalf}`}
+        style={{ transform: badgeTransform }}
+        aria-hidden='true'
+      >
+        <img src={badgeImage} alt='' loading='lazy' decoding='async' />
+      </div>
+    )
+  }
+</article>
+
+<style>
+  .education-card {
+    --accent: 59 130 246;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid hsl(var(--border) / 0.55);
+    border-radius: 1rem;
+    padding: 1.1rem 1.2rem;
+    min-height: 7.4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    max-width: min(70ch, 72%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .school {
+    margin: 0;
+    font-size: 1.3rem;
+    line-height: 1.25;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+  }
+
+  .program,
+  .period {
+    margin: 0;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.4;
+  }
+
+  .program {
+    font-size: 1.02rem;
+    font-weight: 500;
+  }
+
+  .period {
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+  }
+
+  .badge-image-wrapper {
+    position: absolute;
+    right: 0rem;
+    top: 58%;
+    width: 18rem;
+    height: 18rem;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .badge-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+    opacity: 1;
+    filter: grayscale(0.15) saturate(1.1);
+  }
+
+  .badge-image-wrapper.is-top img,
+  .badge-image-wrapper.is-bottom img {
+    object-fit: contain;
+  }
+
+  .badge-image-wrapper.is-top img {
+    clip-path: inset(0 0 50% 0);
+  }
+
+  .badge-image-wrapper.is-bottom img {
+    clip-path: inset(50% 0 0 0);
+  }
+
+  .accent-red {
+    --accent: 185 28 28;
+  }
+
+  .accent-blue {
+    --accent: 37 99 235;
+  }
+
+  .accent-teal {
+    --accent: 8 145 178;
+  }
+
+  .accent-gold {
+    --accent: 202 138 4;
+  }
+
+  @media (max-width: 640px) {
+    .education-card {
+      min-height: 6.9rem;
+      padding: 1rem;
+    }
+
+    .content {
+      max-width: 88%;
+    }
+
+    .school {
+      font-size: 1.2rem;
+    }
+
+    .program,
+    .period {
+      font-size: 0.95rem;
+    }
+  }
+</style>
