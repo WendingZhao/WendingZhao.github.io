@@ -178,7 +178,16 @@ export default defineConfig({
   ],
   rules,
   theme: {
-    colors: themeColors
+    colors: themeColors,
+    animation: {
+      wiggle: 'wiggle 0.5s ease-in-out'
+    },
+    keyframes: {
+      wiggle: {
+        '0%,100%': { transform: 'rotate(-20deg) scale(1.3)' },
+        '50%': { transform: 'rotate(20deg) scale(1.3)' }
+      }
+    }
   },
   // https://unocss.dev/guide/extracting#limitations
   safelist: [
