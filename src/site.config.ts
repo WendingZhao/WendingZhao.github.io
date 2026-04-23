@@ -145,9 +145,9 @@ export const integ: IntegrationUserConfig = {
   },
   // Comment system
   waline: {
-    enable: false,
+    enable: true,
     // Server service link
-    server: 'https://astro-theme-pure-waline.arthals.ink/',
+    server: 'https://comment.qiumo.fun/',
     // Show meta info for comments
     showMeta: false,
     // Refer https://waline.js.org/en/guide/features/emoji.html
@@ -161,7 +161,8 @@ export const integ: IntegrationUserConfig = {
         reaction0: 'Like',
         placeholder: 'Welcome to comment. (Email to receive replies. Login is unnecessary)'
       },
-      imageUploader: false
+      imageUploader: false,
+      noRss: true
     }
   }
 }
