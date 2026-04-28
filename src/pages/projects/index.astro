@@ -23,7 +23,7 @@ const withBase = (path: string) =>
         description: 'A word segmentation translation software based on tauri.',
         links: [
           { type: 'github', href: 'https://github.com/PengweeWang/translate' },
-          { type: 'site', href: 'https://qiumo.fun/translate/' },
+          { type: 'site', href: 'https://Pengwee.Wang/translate/' },
           { type: 'release', href: 'https://github.com/PengweeWang/translate/releases' }
         ]
       },
@@ -74,6 +74,11 @@ const withBase = (path: string) =>
   <Collapse title='Mini Tools'>
     <ProjectSection
       projects={[
+        {
+          name: 'S3explorer',
+          description: '在线S3存储桶查看器',
+          links: [{ type: 'site', href: withBase('s3explorer/') }]
+        },
         {
           name: 'arXiv PDF',
           description: 'arXiv PDF 加速下载',
