@@ -13,7 +13,7 @@ const blog = defineCollection({
   // Load Markdown and MDX files in the `src/content/blog/` directory.
   loader: glob({
     base: './src/content/blog',
-    pattern: ['**/*.{md,mdx}', '!AGENTS.md']
+    pattern: ['**/*.{md,mdx}', '!AGENTS.md', '!**/.opencode/**']
   }),
   // Required
   schema: ({ image }) =>
