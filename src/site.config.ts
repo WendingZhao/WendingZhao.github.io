@@ -3,11 +3,11 @@ import type { CardListData, Config, IntegrationUserConfig, ThemeUserConfig } fro
 export const theme: ThemeUserConfig = {
   // [Basic]
   /** Title for your website. Will be used in metadata and as browser tab title. */
-  title: 'Pengwee Wang\'s blog',
+  title: 'Wending Zhao\'s blog',
   /** Will be used in index page & copyright declaration */
-  author: 'Pengwee Wang',
+  author: 'Wending Zhao',
   /** Description metadata for your website. Can be used in page metadata. */
-  description: 'Time waits for no one.',
+  description: 'Welcome to my blog.',
   /** The default favicon for your site which should be a path to an image in the `public/` directory. */
   favicon: '/favicon/favicon.ico',
   /** The default social card image for your site which should be a path to an image in the `public/` directory. */
@@ -63,7 +63,7 @@ export const theme: ThemeUserConfig = {
     /** Enable displaying a “Astro & Pure theme powered” link in your site’s footer. */
     credits: true,
     /** Optional details about the social media accounts for this site. */
-    social: { github: 'https://github.com/PengweeWang' }
+    social: { github: 'https://github.com/wendingzhao' }
   },
 
   // [Content]
@@ -90,18 +90,14 @@ export const integ: IntegrationUserConfig = {
   links: {
     // Friend logbook
     logbook: [
-      { date: '2025-03-16', content: 'Is there a leakage?' },
-      { date: '2025-03-16', content: 'A leakage of what?' },
-      { date: '2025-03-16', content: 'I have a full seat of water, like, full of water!' },
-      { date: '2025-03-16', content: 'Must be the water.' },
-      { date: '2025-03-16', content: "Let's add that to the words of wisdom." }
+      { date: '2025-01-01', content: 'Welcome to my blog!' }
     ],
     // Yourself link info
     applyTip: [
       { name: 'Name', val: theme.title },
       { name: 'Desc', val: theme.description || 'Null' },
-      { name: 'Link', val: 'https://pengwee.wang' },
-      { name: 'Avatar', val: 'https://pengwee.wang/favicon/favicon.ico' }
+      { name: 'Link', val: 'https://aqu1ver.fun' },
+      { name: 'Avatar', val: 'https://aqu1ver.fun/favicon/favicon.ico' }
     ],
     // Cache avatars in `public/avatars/` to improve user experience.
     cacheAvatar: false
