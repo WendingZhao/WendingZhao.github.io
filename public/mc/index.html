@@ -1,0 +1,646 @@
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="./assets/logo.png">
+    <title>秋墨 Minecraft 服务器 - mc.qiumo.fun</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        // 配置Tailwind自定义颜色和字体
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2ECC71', // Minecraft绿色
+                        secondary: '#3498DB',
+                        accent: '#F1C40F',
+                        dark: '#1E272E',
+                        light: '#F5F6FA'
+                    },
+                    fontFamily: {
+                        minecraft: ['"Minecraftia"', 'monospace', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow {
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            }
+            .block-pixel {
+                background-image: linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+                background-size: 20px 20px;
+            }
+            .animate-float {
+                animation: float 6s ease-in-out infinite;
+            }
+            @keyframes float {
+                0% { transform: translateY(0px); }
+                50% { transform: translateY(-15px); }
+                100% { transform: translateY(0px); }
+            }
+            .server-status-pulse {
+                animation: pulse 2s infinite;
+            }
+            @keyframes pulse {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+        }
+    </style>
+    <!-- Minecraft风格字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Minecraftia&amp;display=swap" rel="stylesheet">
+</head>
+<body class="bg-dark text-light font-sans">
+    <!-- 导航栏 -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-dark/80 backdrop-blur-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-cube text-primary text-2xl"></i>
+                <span class="font-minecraft text-xl md:text-2xl text-primary">秋墨MC</span>
+            </div>
+            <div class="hidden md:flex space-x-8">
+                <a href="#intro" class="hover:text-primary transition-colors">服务器介绍</a>
+                <a href="#features" class="hover:text-primary transition-colors">服务器特色</a>
+                <a href="#join" class="hover:text-primary transition-colors">如何加入</a>
+                <a href="#rules" class="hover:text-primary transition-colors">服务器规则</a>
+                <a href="#status" class="hover:text-primary transition-colors">服务器状态</a>
+            </div>
+            <button class="md:hidden text-2xl" id="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div id="mobile-menu" class="hidden md:hidden bg-dark/95 backdrop-blur-md">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-4">
+                <a href="#intro" class="py-2 hover:text-primary transition-colors">服务器介绍</a>
+                <a href="#features" class="py-2 hover:text-primary transition-colors">服务器特色</a>
+                <a href="#join" class="py-2 hover:text-primary transition-colors">如何加入</a>
+                <a href="#rules" class="py-2 hover:text-primary transition-colors">服务器规则</a>
+                <a href="#status" class="py-2 hover:text-primary transition-colors">服务器状态</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="relative pt-24 pb-16 md:pt-32 md:pb-24 overflow-hidden block-pixel">
+        <div class="absolute inset-0 bg-gradient-to-b from-dark/80 to-dark z-10"></div>
+        <div class="container mx-auto px-4 relative z-20">
+            <div class="flex flex-col items-center text-center">
+                <h1 class="font-minecraft text-4xl md:text-6xl lg:text-7xl mb-6 text-primary text-shadow animate-float">
+                    秋墨 Minecraft 服务器
+                </h1>
+                <p class="text-xl md:text-2xl mb-8 max-w-3xl">
+                    一个纯净、友好的原版生存服务器，等待你的探索与创造
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#join" class="bg-primary hover:bg-primary/80 text-dark font-bold py-3 px-8 rounded transition-all transform hover:scale-105">
+                        <i class="fa fa-sign-in mr-2"></i>立即加入
+                    </a>
+                    <a href="#status" class="bg-transparent border-2 border-primary text-primary hover:bg-primary/10 font-bold py-3 px-8 rounded transition-all">
+                        <i class="fa fa-server mr-2"></i>服务器状态
+                    </a>
+                </div>
+                <div class="mt-12 px-6 py-3 bg-dark/50 backdrop-blur-sm rounded-lg border border-primary/30">
+                    <p class="font-minecraft text-lg"><i class="fa fa-globe mr-2"></i>服务器地址: <span class="text-accent">mc.qiumo.fun</span></p>
+                </div>
+            </div>
+        </div>
+        <!-- 装饰性像素块 -->
+        <div class="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-r from-primary/20 via-secondary/20 to-accent/20"></div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12">
+        <!-- 服务器介绍 -->
+        <section id="intro" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-minecraft text-primary mb-4">服务器介绍</h2>
+                <div class="w-32 h-1 bg-primary mx-auto rounded-full"></div>
+            </div>
+            
+            <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-primary/20 shadow-lg transform transition-all hover:shadow-primary/10">
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <div class="md:w-1/2">
+                        <img src="./assets/pic1.jpg" alt="Minecraft游戏场景" class="rounded-lg shadow-lg w-full h-auto">
+                    </div>
+                    <div class="md:w-1/2">
+                        <h3 class="text-2xl font-minecraft text-accent mb-4">关于我们的服务器</h3>
+                        <p class="mb-4 text-light/80">秋墨MC服务器是一个基于Java版1.21.8的原版生存服务器，致力于为玩家提供纯粹的Minecraft游戏体验。</p>
+                        <p class="mb-4 text-light/80">我们的服务器创建于2025年，由一群热爱Minecraft的玩家共同维护，旨在打造一个友好、和谐的游戏社区。</p>
+                        <p class="text-light/80">无论你是建筑大师、红石专家，还是探索冒险家，这里都有你的一席之地。我们欢迎所有热爱Minecraft的玩家加入我们的大家庭！</p>
+                        
+                        <div class="mt-6 flex flex-wrap gap-4">
+                            <div class="flex items-center">
+                                <i class="fa fa-check-circle text-primary mr-2"></i>
+                                <span>原版纯净体验</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-check-circle text-primary mr-2"></i>
+                                <span>稳定运行（×）</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-check-circle text-primary mr-2"></i>
+                                <span>友好社区</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-check-circle text-primary mr-2"></i>
+                                <span>定期备份（×）</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 服务器特色 -->
+        <section id="features" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-minecraft text-primary mb-4">服务器特色</h2>
+                <div class="w-32 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 max-w-2xl mx-auto text-light/70">我们的服务器拥有多种特色功能，为你带来原汁原味又不失乐趣的游戏体验</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- 特色卡片1 -->
+                <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20 shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-primary/10">
+                    <div class="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-5">
+                        <i class="fa fa-code-fork text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-minecraft text-accent mb-3">原版纯净</h3>
+                    <p class="text-light/70">基于官方1.21.8版本，无任何破坏游戏平衡的插件，让你体验最纯粹的Minecraft玩法。</p>
+                </div>
+                
+                <!-- 特色卡片2 -->
+                <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20 shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-primary/10">
+                    <div class="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-5">
+                        <i class="fa fa-shield text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-minecraft text-accent mb-3">安全稳定（×）</h3>
+                    <p class="text-light/70"><del>专业服务器硬件，24小时稳定运行，定期自动备份，确保你的建筑和物品安全无忧。</del></p>
+                </div>
+                
+                <!-- 特色卡片3 -->
+                <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20 shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-primary/10">
+                    <div class="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-5">
+                        <i class="fa fa-users text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-minecraft text-accent mb-3">友好社区</h3>
+                    <p class="text-light/70">我们拥有一批热情友好的玩家和管理员，营造和谐的游戏氛围，帮助新手快速融入。</p>
+                </div>
+                
+                <!-- 特色卡片4 -->
+                <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20 shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-primary/10">
+                    <div class="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-5">
+                        <i class="fa fa-calendar-check-o text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-minecraft text-accent mb-3">定期活动（×）</h3>
+                    <p class="text-light/70"><del>管理员会定期组织各种游戏活动，如建筑比赛、PVP竞技等，获胜者可获得丰厚奖励。</del></p>
+                </div>
+                
+                <!-- 特色卡片5 -->
+                <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20 shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-primary/10">
+                    <div class="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-5">
+                        <i class="fa fa-comments text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-minecraft text-accent mb-3">社区互动</h3>
+                    <p class="text-light/70"><del>专属Discord社区，方便玩家交流游戏心得、分享建筑作品，结识更多游戏好友。</del></p>
+                </div>
+                
+                <!-- 特色卡片6 -->
+                <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 border border-primary/20 shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-primary/10">
+                    <div class="w-14 h-14 bg-primary/20 rounded-lg flex items-center justify-center mb-5">
+                        <i class="fa fa-lightbulb-o text-primary text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-minecraft text-accent mb-3">创意无限</h3>
+                    <p class="text-light/70">支持玩家自由发挥创意，建造各种宏伟建筑，我们鼓励创新和分享精神。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 如何加入 -->
+        <section id="join" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-minecraft text-primary mb-4">如何加入</h2>
+                <div class="w-32 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 max-w-2xl mx-auto text-light/70">只需简单几步，即可加入我们的服务器，开始你的冒险之旅</p>
+            </div>
+            
+            <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-primary/20 shadow-lg">
+                <div class="flex flex-col lg:flex-row gap-8">
+                    <div class="lg:w-1/2">
+                        <img src="./assets/pic2.avif" alt="Minecraft服务器连接界面" class="rounded-lg shadow-lg w-full h-auto">
+                        
+                        <div class="mt-8 p-4 bg-dark/70 rounded-lg border border-accent/30">
+                            <h4 class="font-minecraft text-accent mb-3 flex items-center">
+                                <i class="fa fa-info-circle mr-2"></i>服务器信息
+                            </h4>
+                            <ul class="space-y-2 text-light/80">
+                                <li class="flex items-start">
+                                    <i class="fa fa-server text-primary mt-1 mr-3 w-5 text-center"></i>
+                                    <div>
+                                        <span class="font-medium">服务器地址:</span>
+                                        <span class="ml-2 text-accent font-minecraft">mc.qiumo.fun</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-code text-primary mt-1 mr-3 w-5 text-center"></i>
+                                    <div>
+                                        <span class="font-medium">游戏版本:</span>
+                                        <span class="ml-2">Java Edition 1.21.8</span>
+                                    </div>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fa fa-key text-primary mt-1 mr-3 w-5 text-center"></i>
+                                    <div>
+                                        <span class="font-medium">是否需要正版:</span>
+                                        <span class="ml-2">否 (支持离线模式)</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:w-1/2">
+                        <h3 class="text-2xl font-minecraft text-accent mb-6">加入步骤</h3>
+                        
+                        <div class="space-y-6">
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center font-bold">1</div>
+                                <div>
+                                    <h4 class="text-xl font-medium mb-2">准备游戏</h4>
+                                    <p class="text-light/70">确保你已安装Minecraft Java版1.21.8。如果版本不符，可以在启动器中新建1.21.8版本的游戏实例。</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center font-bold">2</div>
+                                <div>
+                                    <h4 class="text-xl font-medium mb-2">添加服务器</h4>
+                                    <p class="text-light/70">打开游戏，进入多人游戏，点击"添加服务器"，在服务器地址栏输入：<span class="font-minecraft text-accent">mc.qiumo.fun</span></p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex gap-4">
+                                <div class="flex-shrink-0 w-10 h-10 rounded-full bg-primary flex items-center justify-center font-bold">3</div>
+                                <div>
+                                    <h4 class="text-xl font-medium mb-2">加入游戏</h4>
+                                    <p class="text-light/70">点击服务器列表中的我们的服务器，然后点击"加入服务器"按钮，等待连接成功即可。</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 p-4 bg-secondary/10 rounded-lg border border-secondary/30">
+                            <h4 class="font-medium text-secondary mb-2 flex items-center">
+                                <i class="fa fa-exclamation-circle mr-2"></i>常见问题
+                            </h4>
+                            <div class="space-y-3 text-light/80 text-sm">
+                                <p><span class="font-medium">Q: 连接失败怎么办？</span> A: 检查网络连接，确认游戏版本正确，或尝试重启游戏。</p>
+                                <p><span class="font-medium">Q: 服务器需要正版账号吗？</span> A: 不需要，支持离线账号，但我们鼓励使用正版。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 服务器规则 -->
+        <section id="rules" class="mb-20 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-minecraft text-primary mb-4">服务器规则</h2>
+                <div class="w-32 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 max-w-2xl mx-auto text-light/70">为了维护良好的游戏环境，请所有玩家遵守以下规则</p>
+            </div>
+            
+            <div class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-primary/20 shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-minecraft text-accent mb-6">基本规则</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>尊重所有玩家和管理员，禁止辱骂、歧视、人身攻击等行为</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>禁止使用任何作弊客户端、黑客工具、脚本或利用漏洞</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>禁止破坏他人建筑或未经允许拿取他人物品</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>禁止刷屏、发送垃圾信息或广告</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>禁止建造不适当、冒犯性或令人不适的建筑</p>
+                            </div>
+                        </div>
+                        
+                        <h3 class="text-2xl font-minecraft text-accent mt-8 mb-6">游戏规则</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>请合理利用资源，禁止无意义地浪费或破坏自然环境</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>PVP需双方同意，禁止恶意偷袭或追杀新手玩家</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>禁止制造过度卡服的红石机器或实体</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-check-circle text-primary mt-1"></i>
+                                <p>建议在远离Spawn的地方建造基地，避免过度拥挤</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-2xl font-minecraft text-accent mb-6">处罚机制</h3>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-exclamation-triangle text-accent mt-1"></i>
+                                <p><span class="font-medium">第一次违规</span>：警告并提醒遵守规则</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-exclamation-triangle text-accent mt-1"></i>
+                                <p><span class="font-medium">第二次违规</span>：根据情节轻重，临时禁言或禁赛</p>
+                            </div>
+                            <div class="flex items-start gap-3">
+                                <i class="fa fa-exclamation-triangle text-accent mt-1"></i>
+                                <p><span class="font-medium">严重违规或多次违规</span>：永久封禁账号</p>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 p-5 bg-primary/10 rounded-lg border border-primary/30">
+                            <h4 class="font-minecraft text-primary mb-3 flex items-center">
+                                <i class="fa fa-gavel mr-2"></i>举报违规行为
+                            </h4>
+                            <p class="mb-3 text-light/80">如果发现有玩家违反服务器规则，请通过以下方式举报：</p>
+                            <ol class="list-decimal pl-5 space-y-2 text-light/80">
+                                <li>在游戏中使用 /report 命令</li>
+                                <li>联系在线管理员</li>
+                                <li>在Discord社区的举报频道提交</li>
+                            </ol>
+                            <p class="mt-3 text-light/80">举报时请提供违规玩家ID、违规行为描述和相关证据（如截图）。</p>
+                        </div>
+                        
+                        <div class="mt-6 text-light/60 text-sm italic">
+                            <p>管理员拥有规则的最终解释权和执行权。我们会根据实际情况灵活处理各种问题，力求公平公正。</p>
+                            <p class="mt-2">服务器规则可能会不定期更新，请玩家留意公告。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 服务器状态 -->
+        <section id="status" class="mb-12 scroll-mt-20">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-minecraft text-primary mb-4">服务器状态</h2>
+                <div class="w-32 h-1 bg-primary mx-auto rounded-full"></div>
+                <p class="mt-4 max-w-2xl mx-auto text-light/70">实时查看服务器在线状态和玩家信息</p>
+            </div>
+            
+            <div id="status-container" class="bg-dark/50 backdrop-blur-sm rounded-xl p-6 md:p-8 border border-primary/20 shadow-lg">
+                <div class="flex flex-col md:flex-row gap-8 items-center">
+                    <!-- 状态指示器 -->
+                    <div class="md:w-1/3 text-center">
+                        <div id="status-indicator" class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gray-700 mb-4 server-status-pulse">
+                            <i class="fa fa-spinner fa-spin text-4xl text-gray-400"></i>
+                        </div>
+                        <h3 id="status-text" class="text-2xl font-minecraft">加载中...</h3>
+                        <p id="version-text" class="mt-2 text-light/60">获取版本信息中...</p>
+                    </div>
+                    
+                    <!-- 玩家信息 -->
+                    <div class="md:w-2/3 w-full">
+                        <h3 class="text-xl font-minecraft text-accent mb-4">在线玩家</h3>
+                        <div id="players-container" class="bg-dark/70 rounded-lg p-4 border border-primary/20 min-h-[150px] flex flex-col items-center justify-center">
+                            <div class="text-center">
+                                <i class="fa fa-spinner fa-spin text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-light/60">获取玩家信息中...</p>
+                            </div>
+                        </div>
+                        
+                        <!-- 服务器信息 -->
+                        <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="bg-dark/70 rounded-lg p-4 border border-primary/20">
+                                <h4 class="font-medium text-light/80 mb-2">服务器地址</h4>
+                                <p class="font-minecraft text-accent">mc.qiumo.fun</p>
+                            </div>
+                            <div class="bg-dark/70 rounded-lg p-4 border border-primary/20">
+                                <h4 class="font-medium text-light/80 mb-2">最大玩家数</h4>
+                                <p id="max-players" class="text-xl">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- MOTD -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-minecraft text-accent mb-4">服务器公告</h3>
+                    <div id="motd-container" class="bg-dark/70 rounded-lg p-4 border border-primary/20 min-h-[80px] flex items-center justify-center">
+                        <p class="text-light/60">获取公告信息中...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-dark/80 backdrop-blur-md border-t border-primary/20 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <div class="flex items-center space-x-2">
+                        <i class="fa fa-cube text-primary text-2xl"></i>
+                        <span class="font-minecraft text-xl text-primary">秋墨MC服务器</span>
+                    </div>
+                    <p class="mt-2 text-light/60 text-sm">一个纯净、友好的原版生存服务器</p>
+                </div>
+                
+                <div class="flex flex-col items-center md:items-end">
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                            <i class="fa fa-discord text-xl"></i>
+                        </a>
+                        <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                            <i class="fa fa-github text-xl"></i>
+                        </a>
+                        <a href="#" class="text-light/60 hover:text-primary transition-colors">
+                            <i class="fa fa-twitter text-xl"></i>
+                        </a>
+                    </div>
+                    <p class="text-light/40 text-sm">© 2025 秋墨MC服务器. 保留所有权利.</p>
+                    <p class="text-light/40 text-sm mt-1">服务器地址: mc.qiumo.fun</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-dark w-12 h-12 rounded-full flex items-center justify-center shadow-lg transform transition-all scale-0 hover:bg-primary/80">
+        <i class="fa fa-arrow-up"></i>
+    </button>
+
+    <script>
+        // 移动端菜单切换
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            const backToTop = document.getElementById('back-to-top');
+            
+            if (window.scrollY > 100) {
+                navbar.classList.add('py-2', 'shadow-md');
+                navbar.classList.remove('py-3');
+                backToTop.classList.replace('scale-0', 'scale-100');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'shadow-md');
+                backToTop.classList.replace('scale-100', 'scale-0');
+            }
+        });
+
+        // 返回顶部功能
+        document.getElementById('back-to-top').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                // 关闭移动菜单（如果打开）
+                document.getElementById('mobile-menu').classList.add('hidden');
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 获取服务器状态信息
+        async function getServerStatus() {
+            const serverUrl = 'mc.qiumo.fun';
+            const apiUrl = `https://api.mcsrvstat.us/3/${serverUrl}`;
+            
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                updateServerStatus(data);
+            } catch (error) {
+                console.error('获取服务器状态失败:', error);
+                updateServerStatus(null);
+            }
+        }
+
+        // 更新服务器状态显示
+        function updateServerStatus(data) {
+            const statusIndicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            const versionText = document.getElementById('version-text');
+            const playersContainer = document.getElementById('players-container');
+            const maxPlayers = document.getElementById('max-players');
+            const motdContainer = document.getElementById('motd-container');
+            
+            if (!data) {
+                // 出错状态
+                statusIndicator.className = 'inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-900/30 mb-4';
+                statusIndicator.innerHTML = '<i class="fa fa-times text-4xl text-red-500"></i>';
+                statusText.textContent = '无法连接';
+                versionText.textContent = '获取信息失败';
+                playersContainer.innerHTML = '<p class="text-light/60">无法获取玩家信息</p>';
+                maxPlayers.textContent = '-';
+                motdContainer.innerHTML = '<p class="text-light/60">无法获取公告信息</p>';
+                return;
+            }
+            
+            // 更新状态指示器
+            if (data.online) {
+                statusIndicator.className = 'inline-flex items-center justify-center w-24 h-24 rounded-full bg-green-900/30 mb-4 server-status-pulse';
+                statusIndicator.innerHTML = '<i class="fa fa-check text-4xl text-green-500"></i>';
+                statusText.textContent = '在线';
+            } else {
+                statusIndicator.className = 'inline-flex items-center justify-center w-24 h-24 rounded-full bg-red-900/30 mb-4';
+                statusIndicator.innerHTML = '<i class="fa fa-times text-4xl text-red-500"></i>';
+                statusText.textContent = '离线';
+                versionText.textContent = '服务器未运行';
+            }
+            
+            // 更新版本信息
+            if (data.version) {
+                versionText.textContent = `版本: ${data.version}`;
+            }
+            
+            // 更新玩家信息
+            if (data.players) {
+                maxPlayers.textContent = data.players.max;
+                
+                if (data.players.online > 0 && data.players.list) {
+                    let playersHTML = `
+                        <div class="w-full flex justify-between items-center mb-2">
+                            <span>当前在线: <span class="text-primary font-bold">${data.players.online}/${data.players.max}</span></span>
+                        </div>
+                        <ul class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 w-full">
+                    `;
+                    
+                    data.players.list.forEach(player => {
+                        playersHTML += `
+                            <li class="flex items-center bg-dark/50 p-2 rounded border border-primary/10">
+                                <i class="fa fa-user text-primary mr-2"></i>
+                                <span>${player.name}</span>
+                            </li>
+                        `;
+                    });
+                    
+                    playersHTML += `</ul>`;
+                    playersContainer.innerHTML = playersHTML;
+                } else {
+                    playersContainer.innerHTML = `
+                        <div class="text-center">
+                            <p class="text-light/60">当前在线: <span class="text-primary font-bold">${data.players.online}/${data.players.max}</span></p>
+                            <p class="mt-2 text-light/40">暂无玩家在线</p>
+                        </div>
+                    `;
+                }
+            }
+            
+            // 更新MOTD (服务器公告)
+            if (data.motd && data.motd.clean && data.motd.clean.length > 0) {
+                motdContainer.innerHTML = `<p>${data.motd.clean.join('<br>')}</p>`;
+            } else {
+                motdContainer.innerHTML = '<p class="text-light/60">暂无公告信息</p>';
+            }
+        }
+
+        // 页面加载时获取服务器状态
+        window.addEventListener('load', getServerStatus);
+        
+        // 每30秒刷新一次服务器状态
+        setInterval(getServerStatus, 30000);
+    </script>
+
+
+</body></html>
